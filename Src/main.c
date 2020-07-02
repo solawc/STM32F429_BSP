@@ -21,37 +21,17 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-
-
-
-
 /**
   * @brief  The application entry point.
   * @retval int
   */
 int main(void)
 {
-
-  HAL_Init();
-  SystemClock_Config();
-
-  MX_GPIO_Init();
-  bsp_led_init();
-  bsp_key_init();
-  bsp_debug_usart_init();
   DEBUG_PRINT("hardware init finsh");
-  /* USER CODE BEGIN 2 */
 
-  /* USER CODE END 2 */
+  led_task_init();
+  key_task_init();
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    bsp_led_toggle(BSP_LED_R);
-    HAL_Delay(500);
-  }
-  /* USER CODE END 3 */
 }
 
 /**
@@ -117,15 +97,10 @@ void SystemClock_Config(void)
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
     HAL_IncTick();
   }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
+ 
 }
 
 /**

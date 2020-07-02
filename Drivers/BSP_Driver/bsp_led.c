@@ -67,6 +67,7 @@ void bsp_led_toggle(uint16_t bsp_led_x)
     HAL_GPIO_TogglePin(LED_GPIO,bsp_led_x);
 }
 
+
 void bsp_led_pwm_mode_init(void)
 {
 

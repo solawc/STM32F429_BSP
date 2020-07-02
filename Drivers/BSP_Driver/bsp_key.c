@@ -37,5 +37,34 @@ uint8_t bsp_key_read(uint16_t bsp_key_x)
 }
 
 
+uint8_t bsp_key_scanf(void)
+{
+    static uint8_t key_status = 1;
 
+    if(key_status && ((bsp_key_read(BSP_KEY1) == 1) || (bsp_key_read(BSP_KEY2) == 1)))
+    {   
+        key_status = 0;
+
+        if(bsp_key_read(BSP_KEY1) == 1) return 1;
+        else if(bsp_key_read(BSP_KEY2) == 1) return 2;
+    }
+    else if((bsp_key_read(BSP_KEY1) == 0) && (bsp_key_read(BSP_KEY2) == 0))
+    {
+        key_status = 1;
+    }
+    return 0;
+}
+
+void bsp_key1_thread_callback(void)
+{
+    DEBUG_PRINT("key1 down");
+    //Add you code...
+
+}
+
+void bsp_key2_thread_callback(void)
+{
+    DEBUG_PRINT("key2 down");
+    //Add you code...
+}
 

@@ -16,4 +16,6 @@
 
 void bsp_debug_usart_init(void);
 
+void bsp_hc_05_uart_init(uint32_t baudrate);
+
 #endif

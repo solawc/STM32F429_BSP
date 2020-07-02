@@ -12,6 +12,8 @@
 
 bool bsp_key_init(void);
 uint8_t bsp_key_read(uint16_t bsp_key_x);
+uint8_t bsp_key_scanf(void);
 
-
+void bsp_key1_thread_callback(void);
+void bsp_key2_thread_callback(void);
 #endif

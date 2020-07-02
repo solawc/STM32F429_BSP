@@ -39,7 +39,8 @@ extern "C" {
 #include "bsp_led.h"
 #include "bsp_key.h"
 #include "debug_usart.h"
-
+#include "board.h"
+#include "rt_app.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
