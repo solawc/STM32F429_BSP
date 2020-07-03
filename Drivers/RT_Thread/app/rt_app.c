@@ -3,11 +3,24 @@
 rt_thread_t led_thread = RT_NULL;
 void led_task_entry(void *parg)
 {   
-
+    uint8_t buff_read;
+    bool status = true;
     while(1)
     {
         bsp_led_toggle(BSP_LED_R);
-        rt_thread_mdelay(500); 
+
+        while(status == true)
+        {
+            status = ringbuffer_read(&buff_read);
+            
+            if(status == true)
+            {
+                HAL_UART_Transmit(&huart1,&buff_read,1,1);
+            }
+            
+        }
+        status = true;
+        rt_thread_mdelay(50); 
     }
 }
 

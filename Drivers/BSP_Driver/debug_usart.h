@@ -3,6 +3,8 @@
 
 #include "main.h"
 
+
+
 #define DEBUG_SWITCH                      1
 
 #if DEBUG_SWITCH
@@ -13,9 +15,24 @@
 #define DEBUG_PRINT(fmt,arg...)
 #endif 
 
+#define RINGBUF_LENGTH              4096
+typedef struct 
+{
+    uint32_t head;
+    uint32_t tail;
+    uint8_t buff[RINGBUF_LENGTH];
+    uint32_t len;
+}ringbuff_t;
+
+
+extern ringbuff_t debug_ringbuf;
+
+
 
 void bsp_debug_usart_init(void);
 
-void bsp_hc_05_uart_init(uint32_t baudrate);
+bool ringbuffer_init(void);
+bool ringbuffer_write(uint8_t data);
+bool ringbuffer_read(uint8_t *data);
 
 #endif

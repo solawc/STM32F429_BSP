@@ -28,6 +28,7 @@
 int main(void)
 {
   DEBUG_PRINT("hardware init finsh");
+  hc_05_send_string("hardware init finsh\r\n");
 
   led_task_init();
   key_task_init();

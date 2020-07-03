@@ -536,6 +536,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP_Driver\debug_usart.c</FilePath>
             </File>
+            <File>
+              <FileName>hc_05.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP_Driver\hc_05.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
