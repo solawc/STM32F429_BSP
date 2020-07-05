@@ -77,7 +77,7 @@ void rt_hw_board_init()
     bsp_hc_05_uart_init(115200);
     bsp_led_init();
     bsp_key_init();
-    
+    dht11_init();
 
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT

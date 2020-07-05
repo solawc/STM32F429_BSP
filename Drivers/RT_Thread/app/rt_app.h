@@ -7,4 +7,5 @@
 
 void led_task_init(void);
 void key_task_init(void);
+void dht11_task_init(void);
 #endif

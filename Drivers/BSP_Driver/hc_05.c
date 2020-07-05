@@ -1,10 +1,8 @@
 #include "hc_05.h"
 
 UART_HandleTypeDef huart3;
-
 static void bsp_usart3_gpio_init(void)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -15,9 +13,8 @@ static void bsp_usart3_gpio_init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-
 }
+
 void bsp_hc_05_uart_init(uint32_t baudrate)
 {
 

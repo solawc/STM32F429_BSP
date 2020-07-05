@@ -32,6 +32,7 @@ int main(void)
 
   led_task_init();
   key_task_init();
+  dht11_task_init();
 
 }
 

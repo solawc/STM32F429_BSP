@@ -40,7 +40,7 @@ extern "C" {
 #include "bsp_key.h"
 #include "debug_usart.h"
 #include "hc_05.h"
-
+#include "dht11.h"
 #include "board.h"
 #include "rt_app.h"
 /* USER CODE END Includes */
