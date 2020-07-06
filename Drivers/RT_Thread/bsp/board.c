@@ -74,7 +74,7 @@ void rt_hw_board_init()
 
     MX_GPIO_Init();
     bsp_debug_usart_init();
-    bsp_hc_05_uart_init(115200);
+    bsp_uart3_init(115200);
     bsp_led_init();
     bsp_key_init();
     dht11_init();

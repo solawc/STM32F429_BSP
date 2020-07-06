@@ -4,7 +4,7 @@ void bsp_debug_usart_init(void)
 {
     MX_USART1_UART_Init();
 
-    // __HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE);   //使能串口�?�?
+    // __HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE);  
     // HAL_NVIC_SetPriority(USART1_IRQn, 0, 1);
     // HAL_NVIC_EnableIRQ(USART1_IRQn);
     // ringbuffer_init();

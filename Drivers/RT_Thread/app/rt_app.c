@@ -1,13 +1,25 @@
 #include "rt_app.h"
 
 rt_thread_t led_thread = RT_NULL;
+
 void led_task_entry(void *parg)
 {   
+    uint8_t ring_read = 0;
+    bool ring_status = true;
     while(1)
     {
         bsp_led_toggle(BSP_LED_R);
-        
-        rt_thread_mdelay(500); 
+
+        while (ring_status == true)
+        {
+           ring_status = ringbuffer_read(&ring_read);
+           if(ring_status == true)
+           {
+               HAL_UART_Transmit(&huart1,&ring_read,1,1);
+           }
+        }
+        ring_status = true;
+        rt_thread_mdelay(50); 
     }
 }
 
@@ -55,7 +67,7 @@ void key_task_init(void)
                                     key_task_entry,
                                     RT_NULL,
                                     512,
-                                    4,
+                                    5,
                                     20);
 
     if(key_thread != RT_NULL)
@@ -67,14 +79,13 @@ void key_task_init(void)
 rt_thread_t dht11_thread = RT_NULL;
 void dht11_task_entry(void *parg)
 {
-
     while (1)
     {
         rt_enter_critical();
 
         if(Read_DHT11(&DHT11_Data) == SUCCESS)
         {
-            bsp_led_toggle(BSP_LED_G);
+            //bsp_led_toggle(BSP_LED_G);
         }
         
         rt_exit_critical();
@@ -88,7 +99,7 @@ void dht11_task_init(void)
                                     dht11_task_entry,
                                     RT_NULL,
                                     512,
-                                    5,
+                                    6,
                                     20);
 
     if(dht11_thread != RT_NULL)

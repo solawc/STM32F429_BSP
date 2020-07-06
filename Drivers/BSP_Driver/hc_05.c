@@ -15,7 +15,7 @@ static void bsp_usart3_gpio_init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
 
-void bsp_hc_05_uart_init(uint32_t baudrate)
+void bsp_uart3_init(uint32_t baudrate)
 {
 
   bsp_usart3_gpio_init();
@@ -34,26 +34,44 @@ void bsp_hc_05_uart_init(uint32_t baudrate)
   {
     Error_Handler();
   }
+
+#if USE_HANDLE_RXN
+  __HAL_UART_ENABLE_IT(&huart3,UART_IT_RXNE);  
+  HAL_NVIC_SetPriority(USART3_IRQn, 0, 2);
+  HAL_NVIC_EnableIRQ(USART3_IRQn);
+#endif
+  ringbuffer_init();
 }
 
-void hc_05_send_data(uint8_t data)
+void bsp_usart3_send_data(uint8_t data)
 {
     HAL_UART_Transmit(&huart3, &data, 1, 1000);
 }
 
-void hc_05_send_byte(uint8_t *data)
+void bsp_usart3_send_byte(uint8_t *data)
 {
     HAL_UART_Transmit(&huart3, data, 1, 1000);
 }
 
-void hc_05_send_string(uint8_t *str)
+void bsp_usart3_send_string(uint8_t *str)
 {
     uint8_t k = 0;
-
     do
     {
         HAL_UART_Transmit(&huart3, (uint8_t *)(str+k), 1, 1000);
     } while (*(str + k) == '\0');
-    
+}
+
+
+void USART3_IRQHandler(void)
+{
+  rt_interrupt_enter();
+  uint8_t ch;
+  if(__HAL_UART_GET_FLAG( &huart3, UART_FLAG_RXNE) != RESET)
+  {
+    ch = huart3.Instance->DR;
+    ringbuffer_write(ch);
+  }
+  rt_interrupt_leave();
 }
 

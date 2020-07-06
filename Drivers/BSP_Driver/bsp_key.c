@@ -1,7 +1,5 @@
 #include "bsp_key.h"
 
-
-
 /*
  * KEY1------PA0
  * KEY2------PC13
@@ -58,8 +56,8 @@ uint8_t bsp_key_scanf(void)
 void bsp_key1_thread_callback(void)
 {
     DEBUG_PRINT("key1 down");
-    //Add you code...
-
+    bsp_usart3_send_string("AT+RST\r\n");
+    DEBUG_PRINT("AT+RST");
 }
 
 void bsp_key2_thread_callback(void)

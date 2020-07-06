@@ -15,7 +15,7 @@
 #define DEBUG_PRINT(fmt,arg...)
 #endif 
 
-#define RINGBUF_LENGTH              4096
+#define RINGBUF_LENGTH              10000
 typedef struct 
 {
     uint32_t head;
