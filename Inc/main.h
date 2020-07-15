@@ -1,3 +1,9 @@
+/***********************************************************************
+*@Date: 2020-07-12 18:03:34
+*@LastEditors: SOLA
+*@LastEditTime: 2020-07-12 18:22:58
+*@FilePath: \STM32F429_BSP\Inc\main.h
+***********************************************************************/
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -32,6 +38,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "gizwits_product.h"
 #include "stdbool.h"
 #include "stdio.h"
 #include "usart.h"
@@ -43,6 +50,7 @@ extern "C" {
 #include "dht11.h"
 #include "board.h"
 #include "rt_app.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

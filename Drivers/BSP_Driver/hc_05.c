@@ -1,3 +1,9 @@
+/***********************************************************************
+*@Date: 2020-07-12 18:03:33
+*@LastEditors: SOLA
+*@LastEditTime: 2020-07-12 20:16:24
+*@FilePath: \STM32F429_BSP\Drivers\BSP_Driver\hc_05.c
+***********************************************************************/
 #include "hc_05.h"
 
 UART_HandleTypeDef huart3;
@@ -66,11 +72,16 @@ void bsp_usart3_send_string(uint8_t *str)
 void USART3_IRQHandler(void)
 {
   rt_interrupt_enter();
-  uint8_t ch;
+  // uint8_t ch;
+  uint8_t value = 0;
   if(__HAL_UART_GET_FLAG( &huart3, UART_FLAG_RXNE) != RESET)
   {
-    ch = huart3.Instance->DR;
-    ringbuffer_write(ch);
+  //value = USART_ReceiveData(USART2);//STM32 test demo
+    
+    // ch = huart3.Instance->DR;
+    value = huart3.Instance->DR;
+    gizPutData(&value, 1);
+    // ringbuffer_write(ch);
   }
   rt_interrupt_leave();
 }

@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "gizwits_product.h"
-
+#include "main.h"
 static uint32_t timerMsCount;
 
 /** Current datapoint */
@@ -214,7 +214,8 @@ uint32_t gizGetTimerCount(void)
 */
 void mcuRestart(void)
 {
-
+  __set_FAULTMASK(1);
+  HAL_NVIC_SystemReset();
 }
 /**@} */
 
@@ -226,10 +227,10 @@ void mcuRestart(void)
 * @param none
 * @return none
 */
-void TIMER_IRQ_FUN(void)
-{
-  gizTimerMs();
-}
+// void TIMER_IRQ_FUN(void)
+// {
+//   gizTimerMs();
+// }
 
 /**
 * @brief UART_IRQ_FUN
@@ -241,12 +242,12 @@ void TIMER_IRQ_FUN(void)
 * @param none
 * @return none
 */
-void UART_IRQ_FUN(void)
-{
-  uint8_t value = 0;
-  //value = USART_ReceiveData(USART2);//STM32 test demo
-  gizPutData(&value, 1);
-}
+// void UART_IRQ_FUN(void)
+// {
+//   uint8_t value = 0;
+//   //value = USART_ReceiveData(USART2);//STM32 test demo
+//   gizPutData(&value, 1);
+// }
 
 
 /**
@@ -263,6 +264,7 @@ void UART_IRQ_FUN(void)
 int32_t uartWrite(uint8_t *buf, uint32_t len)
 {
     uint32_t i = 0;
+    uint8_t mdata = 0x55;
     
     if(NULL == buf)
     {
@@ -282,15 +284,14 @@ int32_t uartWrite(uint8_t *buf, uint32_t len)
     {
         //USART_SendData(UART, buf[i]);//STM32 test demo
         //Serial port to achieve the function, the buf[i] sent to the module
+        HAL_UART_Transmit(&huart3,&buf[i],1,1000);
         if(i >=2 && buf[i] == 0xFF)
         {
           //Serial port to achieve the function, the 0x55 sent to the module
           //USART_SendData(UART, 0x55);//STM32 test demo
+          HAL_UART_Transmit(&huart3,&mdata,1,1000);
         }
     }
-
-
-    
     return len;
 }
 

@@ -27,12 +27,15 @@
   */
 int main(void)
 {
+
   DEBUG_PRINT("hardware init finsh");
-  bsp_usart3_send_string("hardware init finsh\r\n");
 
   led_task_init();
   key_task_init();
   dht11_task_init();
+
+  
+  DEBUG_PRINT("task cread fish");
 
 }
 
@@ -100,9 +103,12 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == TIM6) {
+    
+    rt_enter_critical();
     HAL_IncTick();
+    gizTimerMs();
+    rt_exit_critical(); 
   }
- 
 }
 
 /**

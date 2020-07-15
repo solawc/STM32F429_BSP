@@ -53,7 +53,6 @@ void key_task_entry(void *parg)
 
             break;
             case 2: 
-                DEBUG_PRINT("key2 down");   
                 bsp_key2_thread_callback();
             break;
         }
@@ -83,12 +82,10 @@ void dht11_task_entry(void *parg)
     {
         rt_enter_critical();
 
-        if(Read_DHT11(&DHT11_Data) == SUCCESS)
-        {
-            //bsp_led_toggle(BSP_LED_G);
-        }
+        DHT11_PRINTF();
         
         rt_exit_critical();
+        
         rt_thread_delay(1000);
     }
 }
@@ -108,3 +105,30 @@ void dht11_task_init(void)
     }
 }
 
+
+rt_thread_t gizwits_thread = RT_NULL;
+void gizwits_handle_task_entry(void *parg)
+{
+
+    while (1)
+    {
+        rt_enter_critical();  //enter critical
+        gizwitsHandle((dataPoint_t *)&currentDataPoint); //deal with 
+        userHandle();
+        rt_exit_critical(); //exit critical
+    }
+}
+
+void gizwits_handle_task_init(void)
+{
+    gizwits_thread = rt_thread_create( "gizwits task",
+                                    gizwits_handle_task_entry,
+                                    RT_NULL,
+                                    1024,
+                                    3,
+                                    20);
+    if(gizwits_thread != RT_NULL)
+    {
+        rt_thread_startup(gizwits_thread);
+    }
+}

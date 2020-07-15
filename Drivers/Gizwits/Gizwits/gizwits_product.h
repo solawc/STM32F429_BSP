@@ -1,3 +1,9 @@
+/***********************************************************************
+*@Date: 2020-07-12 18:03:34
+*@LastEditors: SOLA
+*@LastEditTime: 2020-07-12 18:23:31
+*@FilePath: \STM32F429_BSP\Drivers\Gizwits\Gizwits\gizwits_product.h
+***********************************************************************/
 /**
 ************************************************************
 * @file         gizwits_product.h
@@ -47,7 +53,7 @@ void userHandle(void);
 void mcuRestart(void);
 int32_t uartWrite(uint8_t *buf, uint32_t len);
 int8_t gizwitsEventProcess(eventInfo_t *info, uint8_t *data, uint32_t len);
-
+void gizTimerMs(void);
 #ifdef __cplusplus
 }
 #endif
