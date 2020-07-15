@@ -95,7 +95,7 @@ void dht11_task_init(void)
     dht11_thread =  rt_thread_create( "dht11 task",
                                     dht11_task_entry,
                                     RT_NULL,
-                                    512,
+                                    1024,
                                     6,
                                     20);
 
@@ -109,13 +109,14 @@ void dht11_task_init(void)
 rt_thread_t gizwits_thread = RT_NULL;
 void gizwits_handle_task_entry(void *parg)
 {
-
+    
     while (1)
-    {
+    {   
         rt_enter_critical();  //enter critical
-        gizwitsHandle((dataPoint_t *)&currentDataPoint); //deal with 
         userHandle();
+        gizwitsHandle((dataPoint_t *)&currentDataPoint); //deal with 
         rt_exit_critical(); //exit critical
+		rt_thread_delay(200);
     }
 }
 
@@ -124,7 +125,7 @@ void gizwits_handle_task_init(void)
     gizwits_thread = rt_thread_create( "gizwits task",
                                     gizwits_handle_task_entry,
                                     RT_NULL,
-                                    1024,
+                                    4096,
                                     3,
                                     20);
     if(gizwits_thread != RT_NULL)

@@ -149,8 +149,9 @@ void userHandle(void)
  /*
     currentDataPoint.valueFeed_food = ;//Add Sensor Data Collection
     currentDataPoint.valueTemplate_read = ;//Add Sensor Data Collection
-
+    
     */
+   currentDataPoint.valueTemplate_read = ((float)DHT11_Data.temp_int +(((float)DHT11_Data.temp_deci)/10));
     
 }
 
@@ -164,7 +165,7 @@ void userHandle(void)
 */
 void userInit(void)
 {
-    memset((uint8_t*)&currentDataPoint, 0, sizeof(dataPoint_t));
+    //memset((uint8_t*)&currentDataPoint, 0, sizeof(dataPoint_t));
     
     /** Warning !!! DataPoint Variables Init , Must Within The Data Range **/ 
     /*
@@ -174,7 +175,7 @@ void userInit(void)
       currentDataPoint.valueFeed_food = ;
       currentDataPoint.valueTemplate_read = ;
     */
-
+   currentDataPoint.valueTemplate_write = 30.0;
 }
 
 
@@ -242,12 +243,12 @@ void mcuRestart(void)
 * @param none
 * @return none
 */
-// void UART_IRQ_FUN(void)
-// {
-//   uint8_t value = 0;
-//   //value = USART_ReceiveData(USART2);//STM32 test demo
-//   gizPutData(&value, 1);
-// }
+void UART_IRQ_FUN(void)
+{
+  uint8_t value = 0;
+  //value = USART_ReceiveData(USART2);//STM32 test demo
+  gizPutData(&value, 1);
+}
 
 
 /**
@@ -264,7 +265,7 @@ void mcuRestart(void)
 int32_t uartWrite(uint8_t *buf, uint32_t len)
 {
     uint32_t i = 0;
-    uint8_t mdata = 0x55;
+    uint8_t data55[1] = {0x55};
     
     if(NULL == buf)
     {
@@ -285,11 +286,14 @@ int32_t uartWrite(uint8_t *buf, uint32_t len)
         //USART_SendData(UART, buf[i]);//STM32 test demo
         //Serial port to achieve the function, the buf[i] sent to the module
         HAL_UART_Transmit(&huart3,&buf[i],1,1000);
+        while(__HAL_UART_GET_FLAG(&huart3,UART_FLAG_TXE)== RESET); //wait the uart send finsh
+
         if(i >=2 && buf[i] == 0xFF)
         {
           //Serial port to achieve the function, the 0x55 sent to the module
           //USART_SendData(UART, 0x55);//STM32 test demo
-          HAL_UART_Transmit(&huart3,&mdata,1,1000);
+          HAL_UART_Transmit(&huart3,data55,1,1000);
+          while(__HAL_UART_GET_FLAG(&huart3,UART_FLAG_TXE)== RESET); //wait the uart send finsh
         }
     }
     return len;

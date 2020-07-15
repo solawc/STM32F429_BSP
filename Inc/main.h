@@ -1,7 +1,7 @@
 /***********************************************************************
 *@Date: 2020-07-12 18:03:34
 *@LastEditors: SOLA
-*@LastEditTime: 2020-07-12 18:22:58
+*@LastEditTime: 2020-07-16 01:45:45
 *@FilePath: \STM32F429_BSP\Inc\main.h
 ***********************************************************************/
 /* USER CODE BEGIN Header */
@@ -45,6 +45,7 @@ extern "C" {
 #include "gpio.h"
 #include "bsp_led.h"
 #include "bsp_key.h"
+#include "bsp_time.h"
 #include "debug_usart.h"
 #include "hc_05.h"
 #include "dht11.h"

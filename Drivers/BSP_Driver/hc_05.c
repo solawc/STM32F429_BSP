@@ -1,12 +1,13 @@
 /***********************************************************************
 *@Date: 2020-07-12 18:03:33
 *@LastEditors: SOLA
-*@LastEditTime: 2020-07-12 20:16:24
+*@LastEditTime: 2020-07-16 07:37:09
 *@FilePath: \STM32F429_BSP\Drivers\BSP_Driver\hc_05.c
 ***********************************************************************/
 #include "hc_05.h"
 
 UART_HandleTypeDef huart3;
+
 static void bsp_usart3_gpio_init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -29,7 +30,7 @@ void bsp_uart3_init(uint32_t baudrate)
   __HAL_RCC_USART3_CLK_ENABLE();
 
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = baudrate;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -43,10 +44,10 @@ void bsp_uart3_init(uint32_t baudrate)
 
 #if USE_HANDLE_RXN
   __HAL_UART_ENABLE_IT(&huart3,UART_IT_RXNE);  
-  HAL_NVIC_SetPriority(USART3_IRQn, 0, 2);
+  HAL_NVIC_SetPriority(USART3_IRQn, 0, 3);
   HAL_NVIC_EnableIRQ(USART3_IRQn);
 #endif
-  ringbuffer_init();
+  
 }
 
 void bsp_usart3_send_data(uint8_t data)
@@ -72,16 +73,12 @@ void bsp_usart3_send_string(uint8_t *str)
 void USART3_IRQHandler(void)
 {
   rt_interrupt_enter();
-  // uint8_t ch;
+  
   uint8_t value = 0;
   if(__HAL_UART_GET_FLAG( &huart3, UART_FLAG_RXNE) != RESET)
   {
-  //value = USART_ReceiveData(USART2);//STM32 test demo
-    
-    // ch = huart3.Instance->DR;
     value = huart3.Instance->DR;
     gizPutData(&value, 1);
-    // ringbuffer_write(ch);
   }
   rt_interrupt_leave();
 }

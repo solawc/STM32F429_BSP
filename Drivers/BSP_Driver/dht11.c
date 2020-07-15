@@ -119,7 +119,7 @@ uint8_t ReadByte(void) {
 uint8_t Read_DHT11(DHT11_Data_TypeDef *DHT11_Data) {
     
     
-	__DHT11_MODE(1);            //����Ϊ���?
+	__DHT11_MODE(1);            //����Ϊ���?
 	
 	__DHT11_OUT_L();            //����
 	
@@ -145,9 +145,9 @@ uint8_t Read_DHT11(DHT11_Data_TypeDef *DHT11_Data) {
 
 		DHT11_Data->temp_deci= ReadByte();  //��ȡ�¶�����
 
-		DHT11_Data->check_sum= ReadByte();  //Ӧ����?
+		DHT11_Data->check_sum= ReadByte();  //Ӧ����?
 
-		__DHT11_MODE(1);                    //����Ϊ���?
+		__DHT11_MODE(1);                    //����Ϊ���?
 
 		__DHT11_OUT_H();
 
@@ -170,7 +170,7 @@ uint8_t Read_DHT11(DHT11_Data_TypeDef *DHT11_Data) {
 *@function: DHT11_PRINTF
 *@input   : none
 *@output  : none
-*@describe: DHT11 ��ӡ����
+*@describe: DHT11 
 *@author  : sola
 ****************************************************************/
 #if 1
@@ -178,11 +178,11 @@ void DHT11_PRINTF(void) {
 
     if(Read_DHT11(&DHT11_Data) == SUCCESS) {
               
-            printf("%d.%d%% RH     %d.%d\r\n",
-					DHT11_Data.humi_int,
-					DHT11_Data.humi_deci,
-					DHT11_Data.temp_int,
-					DHT11_Data.temp_deci);
+            // printf("%d.%d%% RH     %d.%d\r\n",
+			// 		DHT11_Data.humi_int,
+			// 		DHT11_Data.humi_deci,
+			// 		DHT11_Data.temp_int,
+			// 		DHT11_Data.temp_deci);
   } 
   else 
   {

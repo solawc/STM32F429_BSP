@@ -1,3 +1,9 @@
+/***********************************************************************
+*@Date: 2020-07-12 18:03:33
+*@LastEditors: SOLA
+*@LastEditTime: 2020-07-15 23:15:48
+*@FilePath: \STM32F429_BSP\Drivers\BSP_Driver\bsp_key.c
+***********************************************************************/
 #include "bsp_key.h"
 
 /*
@@ -56,13 +62,14 @@ uint8_t bsp_key_scanf(void)
 void bsp_key1_thread_callback(void)
 {
     DEBUG_PRINT("key1 down");
-    bsp_usart3_send_string("AT+RST\r\n");
-    DEBUG_PRINT("AT+RST");
+    DEBUG_PRINT("Set AIRLINK MODE");
+    gizwitsSetMode(WIFI_AIRLINK_MODE);
 }
 
 void bsp_key2_thread_callback(void)
 {
     DEBUG_PRINT("key2 down");
-    //Add you code...
+    DEBUG_PRINT("Set SOFTAP MODE");
+    gizwitsSetMode(WIFI_SOFTAP_MODE);
 }
 
