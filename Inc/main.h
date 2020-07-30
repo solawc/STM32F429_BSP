@@ -46,11 +46,16 @@ extern "C" {
 #include "bsp_led.h"
 #include "bsp_key.h"
 #include "bsp_time.h"
+#include "bsp_i2c.h"
+#include "bsp_sdram.h"
+#include "bsp_lcd.h"
+
 #include "debug_usart.h"
 #include "hc_05.h"
 #include "dht11.h"
 #include "board.h"
 #include "rt_app.h"
+
 
 /* USER CODE END Includes */
 

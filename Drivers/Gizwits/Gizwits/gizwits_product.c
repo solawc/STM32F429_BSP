@@ -18,6 +18,7 @@
 #include "gizwits_product.h"
 #include "main.h"
 static uint32_t timerMsCount;
+uint8_t WIFI_STATUS = 0;      //0为断开连接，1为正在连接
 
 /** Current datapoint */
 dataPoint_t currentDataPoint;
@@ -102,10 +103,10 @@ int8_t gizwitsEventProcess(eventInfo_t *info, uint8_t *gizdata, uint32_t len)
       case WIFI_DISCON_ROUTER:
  
         break;
-      case WIFI_CON_M2M:
+      case WIFI_CON_M2M:  WIFI_STATUS = 1;
  
         break;
-      case WIFI_DISCON_M2M:
+      case WIFI_DISCON_M2M: WIFI_STATUS = 0;
         break;
       case WIFI_RSSI:
         GIZWITS_LOG("RSSI %d\n", wifiData->rssi);
@@ -151,8 +152,7 @@ void userHandle(void)
     currentDataPoint.valueTemplate_read = ;//Add Sensor Data Collection
     
     */
-   currentDataPoint.valueTemplate_read = ((float)DHT11_Data.temp_int +(((float)DHT11_Data.temp_deci)/10));
-    
+    currentDataPoint.valueTemplate_read = ((float)DHT11_Data.temp_int +(((float)DHT11_Data.temp_deci)/10));
 }
 
 /**
@@ -165,7 +165,7 @@ void userHandle(void)
 */
 void userInit(void)
 {
-    //memset((uint8_t*)&currentDataPoint, 0, sizeof(dataPoint_t));
+    memset((uint8_t*)&currentDataPoint, 0, sizeof(dataPoint_t));
     
     /** Warning !!! DataPoint Variables Init , Must Within The Data Range **/ 
     /*
@@ -299,4 +299,13 @@ int32_t uartWrite(uint8_t *buf, uint32_t len)
     return len;
 }
 
+void bsp_gizwits_init(void)
+{   
+    userInit();
+    bsp_uart3_init(9600);
+    memset((uint8_t *)&currentDataPoint,0,sizeof(dataPoint_t));
+    gizwitsInit(); 
+    bsp_time7_init(10-1,9000-1);
+    gizwitsSetMode(WIFI_AIRLINK_MODE);
+}
 

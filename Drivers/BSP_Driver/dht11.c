@@ -119,7 +119,7 @@ uint8_t ReadByte(void) {
 uint8_t Read_DHT11(DHT11_Data_TypeDef *DHT11_Data) {
     
     
-	__DHT11_MODE(1);            //����Ϊ���?
+	__DHT11_MODE(1);            //����Ϊ���??
 	
 	__DHT11_OUT_L();            //����
 	
@@ -147,15 +147,19 @@ uint8_t Read_DHT11(DHT11_Data_TypeDef *DHT11_Data) {
 
 		DHT11_Data->check_sum= ReadByte();  //Ӧ����?
 
-		__DHT11_MODE(1);                    //����Ϊ���?
+		__DHT11_MODE(1);                    //����Ϊ���??
 
 		__DHT11_OUT_H();
 
 		if(DHT11_Data->check_sum == 
-                                    DHT11_Data->humi_int + 
-                                        DHT11_Data->humi_deci + 
-                                            DHT11_Data->temp_int+ 
-                                                DHT11_Data->temp_deci) {
+                                    DHT11_Data->humi_int  + 
+									DHT11_Data->humi_deci + 
+									DHT11_Data->temp_int  + 
+									DHT11_Data->temp_deci) {
+			
+			DHT11_Data->humi = (float)DHT11_Data->humi_int +((float)DHT11_Data->humi_deci)/10;
+			DHT11_Data->temp = (float)DHT11_Data->temp_int +((float)DHT11_Data->temp_deci)/10;
+			
 			return SUCCESS;
 		}
 		else {		

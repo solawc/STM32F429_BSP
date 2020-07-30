@@ -9,31 +9,31 @@
 TIM_HandleTypeDef htim7; 
 void bsp_time7_init(uint16_t arr,uint16_t psc)
 {
-    __HAL_RCC_TIM7_CLK_ENABLE();//使能 TIM3 时钟
+    __HAL_RCC_TIM7_CLK_ENABLE();
 
-    htim7.Instance=TIM7; //通用定时器 7
-    htim7.Init.Prescaler=psc; //分频系数
-    htim7.Init.CounterMode=TIM_COUNTERMODE_UP; //向上计数器
-    htim7.Init.Period=arr; //自动装载值
-    htim7.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;//时钟分频因子
+    htim7.Instance=TIM7; 
+    htim7.Init.Prescaler=psc; 
+    htim7.Init.CounterMode=TIM_COUNTERMODE_UP; 
+    htim7.Init.Period=arr; 
+    htim7.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init(&htim7);
 
-    HAL_NVIC_SetPriority(TIM7_IRQn,1,3); //设置中断优先级，抢占优先级 1，子优先级 3
-    HAL_NVIC_EnableIRQ(TIM7_IRQn); //开启 ITM7 中断
-    HAL_TIM_Base_Start_IT(&htim7);//使能定时器 7 更新中断： TIM_IT_UPDATE
+    HAL_NVIC_SetPriority(TIM7_IRQn,1,3); 
+    HAL_NVIC_EnableIRQ(TIM7_IRQn); 
+    HAL_TIM_Base_Start_IT(&htim7);
 }
 
 void TIM7_IRQHandler(void)
 {
-    rt_enter_critical();
+    rt_interrupt_enter();
     if(__HAL_TIM_GET_FLAG(&htim7, TIM_FLAG_UPDATE) != RESET)
     {
         if(__HAL_TIM_GET_IT_SOURCE(&htim7, TIM_IT_UPDATE) !=RESET)
         {
             __HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);
-            // gizTimerMs();//系统毫秒定时
+            gizTimerMs();
         }
     }
-    rt_exit_critical();
+    rt_interrupt_leave();
 }
 

@@ -25,18 +25,16 @@
   * @brief  The application entry point.
   * @retval int
   */
+
 int main(void)
 {
-
-  DEBUG_PRINT("hardware init finsh");
-
-  led_task_init();
+  
   key_task_init();
+  led_task_init();
   dht11_task_init();
-  gizwits_handle_task_init();
+  //gizwits_handle_task_init();
   
   DEBUG_PRINT("task cread fish");
-
 }
 
 /**
@@ -104,10 +102,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == TIM6) {
     
-    rt_enter_critical();
+    rt_interrupt_enter();
     HAL_IncTick();
-    gizTimerMs();
-    rt_exit_critical(); 
+    // gizTimerMs();
+    rt_interrupt_leave();
   }
 }
 

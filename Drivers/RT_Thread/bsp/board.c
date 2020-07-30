@@ -45,7 +45,7 @@ static uint32_t _SysTick_Config(rt_uint32_t ticks)
 }
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
-#define RT_HEAP_SIZE 1024*4
+#define RT_HEAP_SIZE 1024*30
 static uint32_t rt_heap[RT_HEAP_SIZE];     // heap default size: 4K(1024 * 4)
 RT_WEAK void *rt_heap_begin_get(void)
 {
@@ -62,10 +62,7 @@ RT_WEAK void *rt_heap_end_get(void)
  * This function will initial your board.
  */
 void rt_hw_board_init()
-{
-    // /* System Clock Update */
-    // SystemCoreClockUpdate();
-    
+{  
     HAL_Init();
     SystemClock_Config();
 
@@ -74,15 +71,15 @@ void rt_hw_board_init()
 
     MX_GPIO_Init();
     bsp_debug_usart_init();
-    bsp_led_init();
+    //bsp_led_init();
+    bsp_led_pwm_mode_init();
     bsp_key_init();
     dht11_init();
+    SDRAM_Init();
     
-    bsp_time7_init(10-1,9000-1);
-    bsp_uart3_init(9600);
-    memset((uint8_t *)&currentDataPoint,0,sizeof(dataPoint_t));
-    gizwitsInit(); //初始化机智云
-    gizwitsSetMode(WIFI_AIRLINK_MODE);
+#if 0
+    bsp_gizwits_init();
+#endif
    
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT

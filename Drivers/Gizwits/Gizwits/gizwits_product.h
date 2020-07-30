@@ -13,9 +13,9 @@
 * @version      V03030000
 * @copyright    Gizwits
 * 
-* @note         机智云.只为智能硬件而生
+* @note         机智�?.�?为智能硬件而生
 *               Gizwits Smart Cloud  for Smart Products
-*               链接|增值ֵ|开放|中立|安全|自有|自由|生态
+*               链接|增值ֵ|开放|�?立|安全|�?有|�?由|生�?
 *               www.gizwits.com
 *
 ***********************************************************/
@@ -28,6 +28,7 @@ extern "C" {
 #include <stdint.h>
 #include "gizwits_protocol.h"
 
+extern uint8_t WIFI_STATUS;
 /**
 * MCU software version
 */
@@ -54,6 +55,7 @@ void mcuRestart(void);
 int32_t uartWrite(uint8_t *buf, uint32_t len);
 int8_t gizwitsEventProcess(eventInfo_t *info, uint8_t *data, uint32_t len);
 void gizTimerMs(void);
+void bsp_gizwits_init(void);
 #ifdef __cplusplus
 }
 #endif

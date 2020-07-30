@@ -9,8 +9,6 @@
 
 #include "main.h"
 
-
-
 /*底层接口*/
 #define __DHT11_GPIO_INIT()     dht11_gpio_init()
 #define __DHT11_MODE(MODE)      DHT11_MODE(MODE)
@@ -41,6 +39,8 @@ typedef struct
 	uint8_t  temp_int;	 	//温度的整数部分
 	uint8_t  temp_deci;	 	//温度的小数部分
 	uint8_t  check_sum;	 	//校验和
+	float 	 humi;			//湿度
+	float 	 temp;			//温度
 		                 
 }DHT11_Data_TypeDef;
 extern DHT11_Data_TypeDef DHT11_Data;

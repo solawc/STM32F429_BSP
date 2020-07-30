@@ -4,22 +4,41 @@ rt_thread_t led_thread = RT_NULL;
 
 void led_task_entry(void *parg)
 {   
-    uint8_t ring_read = 0;
-    bool ring_status = true;
+    uint32_t led_duty = 0;
+    uint32_t led_flag = 0;
+
     while(1)
     {
-        bsp_led_toggle(BSP_LED_R);
-
-        while (ring_status == true)
+        if(led_flag == 0)
         {
-           ring_status = ringbuffer_read(&ring_read);
-           if(ring_status == true)
-           {
-               HAL_UART_Transmit(&huart1,&ring_read,1,1);
-           }
+            bsp_rgb_set(0,led_duty,0);
+            led_duty++;
+            if(led_duty == 250)
+            {
+                led_flag = 1;
+            }
         }
-        ring_status = true;
-        rt_thread_mdelay(50); 
+        else if(led_flag == 1)
+        {
+            bsp_rgb_set(0,led_duty,0);
+            led_duty--;
+            if(led_duty == 0)
+            {
+                led_flag = 0;
+            }
+        } 
+        
+        if(WIFI_STATUS == 1) 
+        {
+            bsp_rgb_set(255,led_duty,0);
+        }
+        else
+        {
+            bsp_rgb_set(0,led_duty,255);
+        }
+        
+
+        rt_thread_mdelay(10); 
     }
 }
 
@@ -31,7 +50,6 @@ void led_task_init(void)
                                     512,
                                     4,
                                     20);
-
     if(led_thread != RT_NULL)
     {
         rt_thread_startup(led_thread);
@@ -66,7 +84,7 @@ void key_task_init(void)
                                     key_task_entry,
                                     RT_NULL,
                                     512,
-                                    5,
+                                    4,
                                     20);
 
     if(key_thread != RT_NULL)
@@ -76,6 +94,7 @@ void key_task_init(void)
 }
 
 rt_thread_t dht11_thread = RT_NULL;
+
 void dht11_task_entry(void *parg)
 {
     while (1)
@@ -125,7 +144,7 @@ void gizwits_handle_task_init(void)
     gizwits_thread = rt_thread_create( "gizwits task",
                                     gizwits_handle_task_entry,
                                     RT_NULL,
-                                    4096,
+                                    1024,
                                     3,
                                     20);
     if(gizwits_thread != RT_NULL)
