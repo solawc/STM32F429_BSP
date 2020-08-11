@@ -3,7 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "E:\\Github\\STM32F429_BSP/**",
+                "E:\\GitHub\\STM32\\STM32F429_BSP/**",
                 "D:\\Keil_v5\\ARM\\ARMCC\\include/**"
             ],
             "defines": [

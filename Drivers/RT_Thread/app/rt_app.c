@@ -125,6 +125,55 @@ void dht11_task_init(void)
 }
 
 
+rt_thread_t adc_v_thread = RT_NULL;
+void adc_v_task_entry(void *parg)
+{
+    float adv_get_value = 0;
+    int times = 0;
+    float adc_get_str[255];
+    float res = 0;
+    while(1)
+    {
+        adv_get_value = bsp_adc_get(ADC_CHANNEL_13);
+        adv_get_value = ((float)adv_get_value/(float)4096)*(float)3.3;
+
+        adc_get_str[times] = adv_get_value;
+        times++;
+
+        if(times == 255)
+        {
+            for(int i=0;i<255;i++)
+            {
+                res += adc_get_str[i];
+            }
+
+            res = res /255;
+            DEBUG_PRINT("res :%f",(float)res);
+			times = 0;
+        }
+
+        //DEBUG_PRINT("adc get :%f",(float)adv_get_value);
+        rt_thread_delay(10);
+    }
+}
+
+void adc_v_task_init(void)
+{
+    adc_v_thread =  rt_thread_create( "adc v task",
+                                    adc_v_task_entry,
+                                    RT_NULL,
+                                    4096,
+                                    7,
+                                    20);
+
+    if(adc_v_thread != RT_NULL)
+    {
+        rt_thread_startup(adc_v_thread);
+    }
+}
+
+
+
 rt_thread_t gizwits_thread = RT_NULL;
 void gizwits_handle_task_entry(void *parg)
 {

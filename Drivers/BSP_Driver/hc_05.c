@@ -1,7 +1,7 @@
 /***********************************************************************
 *@Date: 2020-07-12 18:03:33
 *@LastEditors: SOLA
-*@LastEditTime: 2020-07-16 07:37:09
+*@LastEditTime: 2020-07-16 08:03:06
 *@FilePath: \STM32F429_BSP\Drivers\BSP_Driver\hc_05.c
 ***********************************************************************/
 #include "hc_05.h"
@@ -24,7 +24,6 @@ static void bsp_usart3_gpio_init(void)
 
 void bsp_uart3_init(uint32_t baudrate)
 {
-
   bsp_usart3_gpio_init();
 
   __HAL_RCC_USART3_CLK_ENABLE();
@@ -65,7 +64,7 @@ void bsp_usart3_send_string(uint8_t *str)
     uint8_t k = 0;
     do
     {
-        HAL_UART_Transmit(&huart3, (uint8_t *)(str+k), 1, 1000);
+      HAL_UART_Transmit(&huart3, (uint8_t *)(str+k), 1, 1000);
     } while (*(str + k) == '\0');
 }
 

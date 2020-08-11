@@ -169,7 +169,6 @@ uint8_t Read_DHT11(DHT11_Data_TypeDef *DHT11_Data) {
     return 0;
 }
 
-
 /****************************************************************
 *@function: DHT11_PRINTF
 *@input   : none

@@ -1,12 +1,13 @@
 /***********************************************************************
 *@Date: 2020-07-16 01:41:15
 *@LastEditors: SOLA
-*@LastEditTime: 2020-07-16 02:35:26
+*@LastEditTime: 2020-07-16 08:02:29
 *@FilePath: \STM32F429_BSP\Drivers\BSP_Driver\bsp_time.c
 ***********************************************************************/
 #include "bsp_time.h"
 
 TIM_HandleTypeDef htim7; 
+
 void bsp_time7_init(uint16_t arr,uint16_t psc)
 {
     __HAL_RCC_TIM7_CLK_ENABLE();

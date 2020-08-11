@@ -1,7 +1,7 @@
 /***********************************************************************
 *@Date: 2020-07-12 18:03:34
-*@LastEditors: SOLA
-*@LastEditTime: 2020-07-16 01:45:45
+*@LastEditors: Please set LastEditors
+*@LastEditTime: 2020-08-03 11:26:51
 *@FilePath: \STM32F429_BSP\Inc\main.h
 ***********************************************************************/
 /* USER CODE BEGIN Header */
@@ -49,7 +49,7 @@ extern "C" {
 #include "bsp_i2c.h"
 #include "bsp_sdram.h"
 #include "bsp_lcd.h"
-
+#include "bsp_adc.h"
 #include "debug_usart.h"
 #include "hc_05.h"
 #include "dht11.h"

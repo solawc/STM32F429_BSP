@@ -28,13 +28,11 @@
 
 int main(void)
 {
-  
-  key_task_init();
-  led_task_init();
-  dht11_task_init();
-  //gizwits_handle_task_init();
-  
-  DEBUG_PRINT("task cread fish");
+	key_task_init();
+	led_task_init();
+	dht11_task_init();
+	adc_v_task_init();  
+	DEBUG_PRINT("task cread fish");
 }
 
 /**

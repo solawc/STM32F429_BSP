@@ -12,8 +12,8 @@
 
 #define ABS(X)  ((X) > 0 ? (X) : -(X))
 
-static LTDC_HandleTypeDef  Ltdc_Handler;
-static DMA2D_HandleTypeDef Dma2d_Handler;
+LTDC_HandleTypeDef  Ltdc_Handler;
+DMA2D_HandleTypeDef Dma2d_Handler;
 
 /* Default LCD configuration with LCD Layer 1 */
 static uint32_t            ActiveLayer = 0;
@@ -24,32 +24,30 @@ static LCD_DrawPropTypeDef DrawProp[MAX_LAYER_NUMBER];
  * @retval None
  */
 
+#define HBP  46		//HSYNC     效    ?
+#define VBP  23		//VSYNC     效    ?
 
-/*根据液晶数据手册的参数配置*/
-#define HBP  46		//HSYNC后的无效像素
-#define VBP  23		//VSYNC后的无效行数
+#define HSW   1		//HSYNC    
+#define VSW   1		//VSYNC    
 
-#define HSW   1		//HSYNC宽度
-#define VSW   1		//VSYNC宽度
-
-#define HFP  22		//HSYNC前的无效像素
-#define VFP  22		//VSYNC前的无效行数
+#define HFP  22		//HSYNC前    效    
+#define VFP  22		//VSYNC前    效    
 
 static void DrawChar(uint16_t Xpos, uint16_t Ypos, const uint8_t *c);
 static void FillTriangle(uint16_t x1, uint16_t x2, uint16_t x3, uint16_t y1, uint16_t y2, uint16_t y3);
 static void LL_FillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine, uint32_t ColorIndex);
 static void LL_ConvertLineToARGB8888(void * pSrc, void *pDst, uint32_t xSize, uint32_t ColorMode);
  /**
-  * @brief  初始化控制LCD的IO
-  * @param  无
-  * @retval 无
+  * @brief    始      LCD  IO
+  * @param    
+  * @retval   
   */
 static void LCD_GPIO_Config(void)
 { 
 	GPIO_InitTypeDef GPIO_InitStruct;
   
-  /* 使能LCD使用到的引脚时钟 */
-                          //红色数据线
+  /* 使  LCD使 玫       时   */
+                          //  色      
   LTDC_R0_GPIO_CLK_ENABLE();LTDC_R1_GPIO_CLK_ENABLE();LTDC_R2_GPIO_CLK_ENABLE();\
   LTDC_R3_GPIO_CLK_ENABLE();LTDC_R4_GPIO_CLK_ENABLE();LTDC_R5_GPIO_CLK_ENABLE();\
   LTDC_R6_GPIO_CLK_ENABLE();LTDC_R7_GPIO_CLK_ENABLE();LTDC_G0_GPIO_CLK_ENABLE();\
@@ -60,9 +58,9 @@ static void LCD_GPIO_Config(void)
   LTDC_B5_GPIO_CLK_ENABLE();LTDC_B6_GPIO_CLK_ENABLE();LTDC_B7_GPIO_CLK_ENABLE();\
   LTDC_CLK_GPIO_CLK_ENABLE();LTDC_HSYNC_GPIO_CLK_ENABLE();LTDC_VSYNC_GPIO_CLK_ENABLE();\
   LTDC_DE_GPIO_CLK_ENABLE();LTDC_DISP_GPIO_CLK_ENABLE();LTDC_BL_GPIO_CLK_ENABLE();
-/* GPIO配置 */
+/* GPIO     */
 
- /* 红色数据线 */                        
+ /*   色       */                        
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.Mode  = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull  = GPIO_PULLUP;
@@ -99,7 +97,7 @@ static void LCD_GPIO_Config(void)
   GPIO_InitStruct.Alternate = LTDC_R7_AF;
   HAL_GPIO_Init(LTDC_R7_GPIO_PORT, &GPIO_InitStruct);
   
-  //绿色数据线
+  //  色      
   GPIO_InitStruct.Pin =   LTDC_G0_GPIO_PIN; 
   GPIO_InitStruct.Alternate = LTDC_G0_AF;
   HAL_GPIO_Init(LTDC_G0_GPIO_PORT, &GPIO_InitStruct);
@@ -132,7 +130,7 @@ static void LCD_GPIO_Config(void)
   GPIO_InitStruct.Alternate = LTDC_G7_AF;
   HAL_GPIO_Init(LTDC_G7_GPIO_PORT, &GPIO_InitStruct);
   
-  //蓝色数据线
+  //  色      
   GPIO_InitStruct.Pin =   LTDC_B0_GPIO_PIN;
   GPIO_InitStruct.Alternate = LTDC_B0_AF;
   HAL_GPIO_Init(LTDC_B0_GPIO_PORT, &GPIO_InitStruct);
@@ -165,7 +163,7 @@ static void LCD_GPIO_Config(void)
   GPIO_InitStruct.Alternate = LTDC_B7_AF;
   HAL_GPIO_Init(LTDC_B7_GPIO_PORT, &GPIO_InitStruct);
   
-  //控制信号线
+  //     藕   
   GPIO_InitStruct.Pin = LTDC_CLK_GPIO_PIN;
   GPIO_InitStruct.Alternate = LTDC_CLK_AF;
   HAL_GPIO_Init(LTDC_CLK_GPIO_PORT, &GPIO_InitStruct);
@@ -182,7 +180,7 @@ static void LCD_GPIO_Config(void)
   GPIO_InitStruct.Alternate = LTDC_DE_AF;
   HAL_GPIO_Init(LTDC_DE_GPIO_PORT, &GPIO_InitStruct);
   
-  //背光BL 及液晶使能信号DISP
+  //    BL   液  使   藕 DISP
   GPIO_InitStruct.Pin = LTDC_DISP_GPIO_PIN;                             
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -199,33 +197,25 @@ static void LCD_GPIO_Config(void)
 void LCD_Init(void)
 {
     RCC_PeriphCLKInitTypeDef  periph_clk_init_struct;  
-    /* 使能LTDC时钟 */
+
     __HAL_RCC_LTDC_CLK_ENABLE();
-    /* 使能DMA2D时钟 */
     __HAL_RCC_DMA2D_CLK_ENABLE();
-    /* 初始化LCD引脚 */
+
+    /*初始化LCD GPIO */
     LCD_GPIO_Config();
-    /* 初始化SDRAM 用作LCD 显存*/
+    /*初始化SDRAM */
     SDRAM_Init();
-    /* 配置LTDC参数 */
-    Ltdc_Handler.Instance = LTDC;  
-    /* 配置行同步信号宽度(HSW-1) */
+
+    /*     LTDC     */
+    Ltdc_Handler.Instance = LTDC; 
     Ltdc_Handler.Init.HorizontalSync =HSW-1;
-    /* 配置垂直同步信号宽度(VSW-1) */
     Ltdc_Handler.Init.VerticalSync = VSW-1;
-    /* 配置(HSW+HBP-1) */
     Ltdc_Handler.Init.AccumulatedHBP = HSW+HBP-1;
-    /* 配置(VSW+VBP-1) */
     Ltdc_Handler.Init.AccumulatedVBP = VSW+VBP-1;
-    /* 配置(HSW+HBP+有效像素宽度-1) */
     Ltdc_Handler.Init.AccumulatedActiveW = HSW+HBP+LCD_PIXEL_WIDTH-1;
-    /* 配置(VSW+VBP+有效像素高度-1) */
     Ltdc_Handler.Init.AccumulatedActiveH = VSW+VBP+LCD_PIXEL_HEIGHT-1;
-    /* 配置总宽度(HSW+HBP+有效像素宽度+HFP-1) */
     Ltdc_Handler.Init.TotalWidth =HSW+ HBP+LCD_PIXEL_WIDTH + HFP-1; 
-    /* 配置总高度(VSW+VBP+有效像素高度+VFP-1) */
     Ltdc_Handler.Init.TotalHeigh =VSW+ VBP+LCD_PIXEL_HEIGHT + VFP-1;
-    /* 液晶屏时钟配置 */
     /* PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz */
     /* PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz */
     /* PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz */
@@ -235,30 +225,26 @@ void LCD_Init(void)
     periph_clk_init_struct.PLLSAI.PLLSAIR = 5;
     periph_clk_init_struct.PLLSAIDivR = RCC_PLLSAIDIVR_4;
     HAL_RCCEx_PeriphCLKConfig(&periph_clk_init_struct);
-    /* 初始化LCD的像素宽度和高度 */
+  
     Ltdc_Handler.LayerCfg->ImageWidth  = LCD_PIXEL_WIDTH;
     Ltdc_Handler.LayerCfg->ImageHeight = LCD_PIXEL_HEIGHT;
-    /* 设置LCD背景层的颜色，默认黑色 */
+
     Ltdc_Handler.Init.Backcolor.Red = 0;
     Ltdc_Handler.Init.Backcolor.Green = 0;
     Ltdc_Handler.Init.Backcolor.Blue = 0;
-    /* 极性配置 */
-    /* 初始化行同步极性，低电平有效 */
+
     Ltdc_Handler.Init.HSPolarity = LTDC_HSPOLARITY_AL;
-    /* 初始化场同步极性，低电平有效 */
     Ltdc_Handler.Init.VSPolarity = LTDC_VSPOLARITY_AL;
-    /* 初始化数据有效极性，低电平有效 */
     Ltdc_Handler.Init.DEPolarity = LTDC_DEPOLARITY_AL;
-    /* 初始化行像素时钟极性，同输入时钟 */
     Ltdc_Handler.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
     HAL_LTDC_Init(&Ltdc_Handler);
-    /* 初始化字体 */
+
     LCD_SetFont(&LCD_DEFAULT_FONT);
 }
 
 /**
-  * @brief  获取LCD当前有效层X轴的大小
-  * @retval X轴的大小
+  * @brief    取LCD  前  效  X  拇  ?
+  * @retval X  拇  ?
   */
 uint32_t LCD_GetXSize(void)
 {
@@ -266,8 +252,8 @@ uint32_t LCD_GetXSize(void)
 }
 
 /**
-  * @brief  获取LCD当前有效层Y轴的大小
-  * @retval Y轴的大小
+  * @brief    取LCD  前  效  Y  拇  ?
+  * @retval Y  拇  ?
   */
 uint32_t LCD_GetYSize(void)
 {
@@ -275,9 +261,9 @@ uint32_t LCD_GetYSize(void)
 }
 
 /**
-  * @brief  设置LCD当前有效层Y轴的大小
-  * @param  imageWidthPixels：图像宽度像素个数
-  * @retval 无
+  * @brief      LCD  前  效  Y  拇  ?
+  * @param  imageWidthPixels  图        馗   ?
+  * @retval   
   */
 void LCD_SetXSize(uint32_t imageWidthPixels)
 {
@@ -285,8 +271,8 @@ void LCD_SetXSize(uint32_t imageWidthPixels)
 }
 
 /**
-  * @brief  设置LCD当前有效层Y轴的大小
-  * @param  imageHeightPixels：图像高度像素个数
+  * @brief      LCD  前  效  Y  拇  ?
+  * @param  imageHeightPixels  图  叨    馗   ?
   * @retval None
   */
 void LCD_SetYSize(uint32_t imageHeightPixels)
@@ -295,45 +281,45 @@ void LCD_SetYSize(uint32_t imageHeightPixels)
 }
 
 /**
-  * @brief  初始化LCD层 
-  * @param  LayerIndex:  前景层(层1)或者背景层(层0)
-  * @param  FB_Address:  每一层显存的首地址
-  * @param  PixelFormat: 层的像素格式
-  * @retval 无
+  * @brief    始  LCD   
+  * @param  LayerIndex:  前    (  1)   弑     (  0)
+  * @param  FB_Address:  每一   源   椎  ?
+  * @param  PixelFormat:       馗  ?
+  * @retval   
   */
 void LCD_LayerInit(uint16_t LayerIndex, uint32_t FB_Address,uint32_t PixelFormat)
 {     
   LTDC_LayerCfgTypeDef  layer_cfg;
 
-  /* 层初始化 */
-  layer_cfg.WindowX0 = 0;				//窗口起始位置X坐标
-  layer_cfg.WindowX1 = LCD_GetXSize();	//窗口结束位置X坐标
-  layer_cfg.WindowY0 = 0;				//窗口起始位置Y坐标
-  layer_cfg.WindowY1 = LCD_GetYSize();  //窗口结束位置Y坐标
-  layer_cfg.PixelFormat = PixelFormat;	//像素格式
-  layer_cfg.FBStartAdress = FB_Address; //层显存首地址
-  layer_cfg.Alpha = 255;				//用于混合的透明度常量，范围（0—255）0为完全透明
-  layer_cfg.Alpha0 = 0;					//默认透明度常量，范围（0—255）0为完全透明
-  layer_cfg.Backcolor.Blue = 0;			//层背景颜色蓝色分量
-  layer_cfg.Backcolor.Green = 0;		//层背景颜色绿色分量
-  layer_cfg.Backcolor.Red = 0;			//层背景颜色红色分量
-  layer_cfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;//层混合系数1
-  layer_cfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;//层混合系数2
-  layer_cfg.ImageWidth = LCD_GetXSize();//设置图像宽度
-  layer_cfg.ImageHeight = LCD_GetYSize();//设置图像高度
+  /*    始  ? */
+  layer_cfg.WindowX0 = 0;				//      始位  X    
+  layer_cfg.WindowX1 = LCD_GetXSize();	//   诮   位  X    
+  layer_cfg.WindowY0 = 0;				//      始位  Y    
+  layer_cfg.WindowY1 = LCD_GetYSize();  //   诮   位  Y    
+  layer_cfg.PixelFormat = PixelFormat;	//   馗 式
+  layer_cfg.FBStartAdress = FB_Address; //   源  椎 址
+  layer_cfg.Alpha = 255;				//   诨 系 透   瘸       围  ?0  255  0为  全透  
+  layer_cfg.Alpha0 = 0;					//默  透   瘸       围  0  255  0为  全透  
+  layer_cfg.Backcolor.Blue = 0;			// 惚?    色  色    
+  layer_cfg.Backcolor.Green = 0;		// 惚?    色  色    
+  layer_cfg.Backcolor.Red = 0;			// 惚?    色  色    
+  layer_cfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;//    系  1
+  layer_cfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;//    系  2
+  layer_cfg.ImageWidth = LCD_GetXSize();//    图     ?
+  layer_cfg.ImageHeight = LCD_GetYSize();//    图  叨 ?
   
-  HAL_LTDC_ConfigLayer(&Ltdc_Handler, &layer_cfg, LayerIndex); //设置选中的层参数
+  HAL_LTDC_ConfigLayer(&Ltdc_Handler, &layer_cfg, LayerIndex); //    选 械牟    ?
 
-  DrawProp[LayerIndex].BackColor = LCD_COLOR_WHITE;//设置层的字体颜色
-  DrawProp[LayerIndex].pFont     = &LCD_DEFAULT_FONT;//设置层的字体类型
-  DrawProp[LayerIndex].TextColor = LCD_COLOR_BLACK; //设置层的字体背景颜色
+  DrawProp[LayerIndex].BackColor = LCD_COLOR_WHITE;//   貌         ?
+  DrawProp[LayerIndex].pFont     = &LCD_DEFAULT_FONT;//   貌          ?
+  DrawProp[LayerIndex].TextColor = LCD_COLOR_BLACK; //   貌     灞?     ?
   
-  __HAL_LTDC_RELOAD_CONFIG(&Ltdc_Handler);//重载层的配置参数
+  __HAL_LTDC_RELOAD_CONFIG(&Ltdc_Handler);//   夭     貌   ?
 }
 /**
-  * @brief  选择LCD层
-  * @param  LayerIndex: 前景层(层1)或者背景层(层0)
-  * @retval 无
+  * @brief  选  LCD  
+  * @param  LayerIndex: 前    (  1)   弑     (  0)
+  * @retval   
   */
 void LCD_SelectLayer(uint32_t LayerIndex)
 {
@@ -341,10 +327,10 @@ void LCD_SelectLayer(uint32_t LayerIndex)
 } 
 
 /**
-  * @brief  设置LCD层的可视化
-  * @param  LayerIndex: 前景层(层1)或者背景层(层0)
-  * @param  State: 禁能或者使能
-  * @retval 无
+  * @brief      LCD  目  踊 ?
+  * @param  LayerIndex: 前    (  1)   弑     (  0)
+  * @param  State:    芑   使  
+  * @retval   
   */
 void LCD_SetLayerVisible(uint32_t LayerIndex, FunctionalState State)
 {
@@ -360,10 +346,10 @@ void LCD_SetLayerVisible(uint32_t LayerIndex, FunctionalState State)
 } 
 
 /**
-  * @brief  设置LCD的透明度常量
-  * @param  LayerIndex: 前景层(层1)或者背景层(层0)
-  * @param  Transparency: 透明度，范围（0—255）0为完全透明
-  * @retval 无
+  * @brief      LCD  透   瘸   
+  * @param  LayerIndex: 前    (  1)   弑     (  0)
+  * @param  Transparency: 透   龋   围  0  255  0为  全透  
+  * @retval   
   */
 void LCD_SetTransparency(uint32_t LayerIndex, uint8_t Transparency)
 {    
@@ -371,10 +357,10 @@ void LCD_SetTransparency(uint32_t LayerIndex, uint8_t Transparency)
 }
 
 /**
-  * @brief  设置LCD缓冲帧的首地址 
-  * @param  LayerIndex: 前景层(层1)或者背景层(层0)
-  * @param  Address: LCD缓冲帧的首地址     
-  * @retval 无
+  * @brief      LCD    帧   椎 址 
+  * @param  LayerIndex: 前    (  1)   弑     (  0)
+  * @param  Address: LCD    帧   椎 址     
+  * @retval   
   */
 void LCD_SetLayerAddress(uint32_t LayerIndex, uint32_t Address)
 {
@@ -382,28 +368,28 @@ void LCD_SetLayerAddress(uint32_t LayerIndex, uint32_t Address)
 }
 
 /**
-  * @brief  设置显示窗口
-  * @param  LayerIndex: 前景层(层1)或者背景层(层0)
-  * @param  Xpos: LCD 	X轴起始位置
-  * @param  Ypos: LCD 	Y轴起始位置
-  * @param  Width: LCD  窗口大小
-  * @param  Height: LCD 窗口大小  
+  * @brief        示    
+  * @param  LayerIndex: 前    (  1)   弑     (  0)
+  * @param  Xpos: LCD 	X    始位  
+  * @param  Ypos: LCD 	Y    始位  
+  * @param  Width: LCD     诖 小
+  * @param  Height: LCD    诖 小  
   * @retval None
   */
 void LCD_SetLayerWindow(uint16_t LayerIndex, uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height)
 {
-  /* 重新设置窗口大小 */
+  /*        么  诖 小 */
   HAL_LTDC_SetWindowSize(&Ltdc_Handler, Width, Height, LayerIndex);
   
-  /* 重新设置窗口的起始位置 */
+  /*        么  诘   始位   */
   HAL_LTDC_SetWindowPosition(&Ltdc_Handler, Xpos, Ypos, LayerIndex); 
 }
 
 
 /**
-  * @brief  设置LCD当前层文字颜色
-  * @param  Color: 文字颜色
-  * @retval 无
+  * @brief      LCD  前        色
+  * @param  Color:       色
+  * @retval   
   */
 void LCD_SetTextColor(uint32_t Color)
 {
@@ -411,8 +397,8 @@ void LCD_SetTextColor(uint32_t Color)
 }
 
 /**
-  * @brief  获取LCD当前层文字颜色
-  * @retval 文字颜色
+  * @brief    取LCD  前        色
+  * @retval       色
   */
 uint32_t LCD_GetTextColor(void)
 {
@@ -420,9 +406,9 @@ uint32_t LCD_GetTextColor(void)
 }
 
 /**
-  * @brief  设置LCD当前层的文字背景颜色
-  * @param  Color: 文字背景颜色
-  * @retval 无
+  * @brief      LCD  前      直      ?
+  * @param  Color:    直     色
+  * @retval   
   */
 void LCD_SetBackColor(uint32_t Color)
 {
@@ -430,8 +416,8 @@ void LCD_SetBackColor(uint32_t Color)
 }
 
 /**
-  * @brief  获取LCD当前层的文字背景颜色
-  * @retval 文字背景颜色
+  * @brief    取LCD  前      直      ?
+  * @retval    直     色
   */
 uint32_t LCD_GetBackColor(void)
 {
@@ -439,10 +425,10 @@ uint32_t LCD_GetBackColor(void)
 }
 
 /**
- * @brief  设置LCD文字的颜色和背景的颜色
- * @param  TextColor: 指定文字颜色
- * @param  BackColor: 指定背景颜色
- * @retval 无
+ * @brief      LCD   值   色 捅       色
+ * @param  TextColor: 指        色
+ * @param  BackColor: 指        色
+ * @retval   
  */
 void LCD_SetColors(uint32_t TextColor, uint32_t BackColor)
 {
@@ -450,8 +436,8 @@ void LCD_SetColors(uint32_t TextColor, uint32_t BackColor)
      LCD_SetBackColor (BackColor);
 }
 /**
-  * @brief  设置LCD当前层显示的字体
-  * @param  fonts: 字体类型
+  * @brief      LCD  前    示      
+  * @param  fonts:         
   * @retval None
   */
 void LCD_SetFont(sFONT *fonts)
@@ -460,8 +446,8 @@ void LCD_SetFont(sFONT *fonts)
 }
 
 /**
-  * @brief  获取LCD当前层显示的字体
-  * @retval 字体类型
+  * @brief    取LCD  前    示      
+  * @retval         
   */
 sFONT *LCD_GetFont(void)
 {
@@ -469,10 +455,10 @@ sFONT *LCD_GetFont(void)
 }
 
 /**
-  * @brief  读LCD的像素值
-  * @param  Xpos: X 轴坐标位置
-  * @param  Ypos: Y 轴坐标位置
-  * @retval RGB像素值
+  * @brief    LCD      值
+  * @param  Xpos: X       位  
+  * @param  Ypos: Y       位  
+  * @retval RGB    值
   */
 uint32_t LCD_ReadPixel(uint16_t Xpos, uint16_t Ypos)
 {
@@ -480,12 +466,12 @@ uint32_t LCD_ReadPixel(uint16_t Xpos, uint16_t Ypos)
   
   if(Ltdc_Handler.LayerCfg[ActiveLayer].PixelFormat == LTDC_PIXEL_FORMAT_ARGB8888)
   {
-    /* 从SDRAM显存中读取颜色数据 */
+    /*   SDRAM 源  卸 取  色     */
     ret = *(__IO uint32_t*) (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress + (2*(Ypos*LCD_GetXSize() + Xpos)));
   }
   else if(Ltdc_Handler.LayerCfg[ActiveLayer].PixelFormat == LTDC_PIXEL_FORMAT_RGB888)
   {
-    /* 从SDRAM显存中读取颜色数据 */
+    /*   SDRAM 源  卸 取  色     */
     ret  = (*(__IO uint8_t*) (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress + (3*(Ypos*LCD_GetXSize() + Xpos))+2) & 0x00FFFFFF);
 	ret |= (*(__IO uint8_t*) (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress + (3*(Ypos*LCD_GetXSize() + Xpos))+1) & 0x00FFFFFF);
 	ret |= (*(__IO uint8_t*) (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress + (3*(Ypos*LCD_GetXSize() + Xpos))) & 0x00FFFFFF);
@@ -494,12 +480,12 @@ uint32_t LCD_ReadPixel(uint16_t Xpos, uint16_t Ypos)
           (Ltdc_Handler.LayerCfg[ActiveLayer].PixelFormat == LTDC_PIXEL_FORMAT_ARGB4444) || \
           (Ltdc_Handler.LayerCfg[ActiveLayer].PixelFormat == LTDC_PIXEL_FORMAT_AL88))  
   {
-    /* 从SDRAM显存中读取颜色数据 */
+    /*   SDRAM 源  卸 取  色     */
     ret = *(__IO uint16_t*) (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress + (2*(Ypos*LCD_GetXSize() + Xpos)));    
   }
   else
   {
-    /* 从SDRAM显存中读取颜色数据 */
+    /*   SDRAM 源  卸 取  色     */
     ret = *(__IO uint8_t*) (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress + (2*(Ypos*LCD_GetXSize() + Xpos)));    
   }
   
@@ -507,19 +493,19 @@ uint32_t LCD_ReadPixel(uint16_t Xpos, uint16_t Ypos)
 }
 
 /**
-  * @brief  LCD当前层清屏
-  * @param  Color: 背景颜色
+  * @brief  LCD  前      
+  * @param  Color:       色
   * @retval None
   */
 void LCD_Clear(uint32_t Color)
 { 
-  /* 清屏 */ 
+  /*      */ 
   LL_FillBuffer(ActiveLayer, (uint32_t *)(Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress), LCD_GetXSize(), LCD_GetYSize(), 0, Color);
 }
 
 /**
-  * @brief  清除一行
-  * @param  Line: 行
+  * @brief     一  ?
+  * @param  Line:   
   * @retval None
   */
 void LCD_ClearLine(uint32_t Line)
@@ -527,7 +513,7 @@ void LCD_ClearLine(uint32_t Line)
   uint32_t color_backup = DrawProp[ActiveLayer].TextColor;
   DrawProp[ActiveLayer].TextColor = DrawProp[ActiveLayer].BackColor;
   
-  /* 画一个跟背景色一致的矩形完成清除 */
+  /*   一        色一 碌木          */
   LCD_FillRect(0, (Line * DrawProp[ActiveLayer].pFont->Height), LCD_GetXSize(), DrawProp[ActiveLayer].pFont->Height);
   
   DrawProp[ActiveLayer].TextColor = color_backup;
@@ -535,11 +521,11 @@ void LCD_ClearLine(uint32_t Line)
 }
 
 /**
-  * @brief  显示一个字符
-  * @param  Xpos: X轴起始坐标
-  * @param  Ypos: Y轴起始坐标
-  * @param  Ascii: 字符 ascii 码,范围（ 0x20 —0x7E ）
-  * @retval 无
+  * @brief    示一   址 
+  * @param  Xpos: X    始    
+  * @param  Ypos: Y    始    
+  * @param  Ascii:  址  ascii   ,  围   0x20   0x7E   
+  * @retval   
   */
 void LCD_DisplayChar(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii)
 {
@@ -548,11 +534,11 @@ void LCD_DisplayChar(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii)
 }
 
 /**
-  * @brief  显示字符串
-  * @param  Xpos: X轴起始坐标
-  * @param  Ypos: Y轴起始坐标 
-  * @param  Text: 字符串指针
-  * @param  Mode: 显示对齐方式，可以是CENTER_MODE、RIGHT_MODE、LEFT_MODE
+  * @brief    示 址   
+  * @param  Xpos: X    始    
+  * @param  Ypos: Y    始     
+  * @param  Text:  址   指  
+  * @param  Mode:   示   敕绞?        CENTER_MODE  RIGHT_MODE  LEFT_MODE
   * @retval None
   */
 void LCD_DisplayStringAt(uint16_t Xpos, uint16_t Ypos, uint8_t *Text, Text_AlignModeTypdef Mode)
@@ -561,10 +547,10 @@ void LCD_DisplayStringAt(uint16_t Xpos, uint16_t Ypos, uint8_t *Text, Text_Align
   uint32_t size = 0, xsize = 0; 
   uint8_t  *ptr = Text;
   
-  /* 获取字符串大小 */
+  /*   取 址     小 */
   while (*ptr++) size ++ ;
   
-  /* 每一行可以显示字符的数量 */
+  /* 每一 锌     示 址        */
   xsize = (LCD_GetXSize()/DrawProp[ActiveLayer].pFont->Width);
   
   switch (Mode)
@@ -591,31 +577,31 @@ void LCD_DisplayStringAt(uint16_t Xpos, uint16_t Ypos, uint8_t *Text, Text_Align
     }
   }
   
-  /*检查起始行是否在显示范围内 */
+  /*     始   欠     示  围  ? */
   if ((ref_column < 1) || (ref_column >= 0x8000))
   {
     ref_column = 1;
   }
 
-  /* 使用字符显示函数显示每一个字符*/
+  /* 使   址   示      示每一   址 */
   while ((*Text != 0) & (((LCD_GetXSize() - (i*DrawProp[ActiveLayer].pFont->Width)) & 0xFFFF)\
 			>= DrawProp[ActiveLayer].pFont->Width))
   {
-    /* 显示一个字符 */
+    /*   示一   址  */
     LCD_DisplayChar(ref_column, Ypos, *Text);
-    /* 根据字体大小计算下一个偏移位置 */
+    /*          小      一   ?  位   */
     ref_column += DrawProp[ActiveLayer].pFont->Width;
-    /* 指针指向下一个字符 */
+    /* 指  指    一   址  */
     Text++;
     i++;
   }  
 }
 
 /**
-  * @brief  在指定行显示字符串(最多60个)
-  * @param  Line: 显示的行
-  * @param  ptr: 字符串指针
-  * @retval 无
+  * @brief    指      示 址   (   ?60  )
+  * @param  Line:   示    
+  * @param  ptr:  址   指  
+  * @retval   
   */
 void LCD_DisplayStringLine(uint16_t Line, uint8_t *ptr)
 {  
@@ -623,11 +609,11 @@ void LCD_DisplayStringLine(uint16_t Line, uint8_t *ptr)
 }
 
 /**
-  * @brief  绘制水平线
-  * @param  Xpos: X轴起始坐标
-  * @param  Ypos: Y轴起始坐标
-  * @param  Length: 线的长度
-  * @retval 无
+  * @brief      水平  
+  * @param  Xpos: X    始    
+  * @param  Ypos: Y    始    
+  * @param  Length:  叩某   
+  * @retval   
   */
 void LCD_DrawHLine(uint16_t Xpos, uint16_t Ypos, uint16_t Length)
 {
@@ -651,16 +637,16 @@ void LCD_DrawHLine(uint16_t Xpos, uint16_t Ypos, uint16_t Length)
   {
     Xaddress = (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress) + 2*(LCD_GetXSize()*Ypos + Xpos);   
   }	
-  /* 填充数据 */
+  /*        ? */
   LL_FillBuffer(ActiveLayer, (uint32_t *)Xaddress, Length, 1, 0, DrawProp[ActiveLayer].TextColor);
 }
 
 /**
-  * @brief  绘制垂直线
-  * @param  Xpos: X轴起始坐标
-  * @param  Ypos: Y轴起始坐标
-  * @param  Length: 线的长度
-  * @retval 无
+  * @brief     拼 直  
+  * @param  Xpos: X    始    
+  * @param  Ypos: Y    始    
+  * @param  Length:  叩某   
+  * @retval   
   */
 void LCD_DrawVLine(uint16_t Xpos, uint16_t Ypos, uint16_t Length)
 {
@@ -685,17 +671,17 @@ void LCD_DrawVLine(uint16_t Xpos, uint16_t Ypos, uint16_t Length)
     Xaddress = (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress) + 2*(LCD_GetXSize()*Ypos + Xpos);   
   }	
   
-  /* 填充数据 */
+  /*        ? */
   LL_FillBuffer(ActiveLayer, (uint32_t *)Xaddress, 1, Length, (LCD_GetXSize() - 1), DrawProp[ActiveLayer].TextColor);
 }
 
 /**
-  * @brief  指定两点画一条线
-  * @param  x1: 第一点X轴坐标
-  * @param  y1: 第一点Y轴坐标
-  * @param  x2: 第二点X轴坐标
-  * @param  y2: 第二点Y轴坐标
-  * @retval 无
+  * @brief  指     慊?一    
+  * @param  x1:   一  X      
+  * @param  y1:   一  Y      
+  * @param  x2:  诙   X      
+  * @param  y2:  诙   Y      
+  * @retval   
   */
 void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
 {
@@ -703,98 +689,98 @@ void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
   yinc1 = 0, yinc2 = 0, den = 0, num = 0, num_add = 0, num_pixels = 0, 
   curpixel = 0;
   
-  deltax = ABS(x2 - x1);        /* 求x轴的绝对值 */
-  deltay = ABS(y2 - y1);        /* 求y轴的绝对值 */
-  x = x1;                       /* 第一个像素的x坐标起始值 */
-  y = y1;                       /* 第一个像素的y坐标起始值 */
+  deltax = ABS(x2 - x1);        /*   x  木    ? */
+  deltay = ABS(y2 - y1);        /*   y  木    ? */
+  x = x1;                       /*   一     氐 x      始值 */
+  y = y1;                       /*   一     氐 y      始值 */
   
-  if (x2 >= x1)                 /* x坐标值为递增 */
+  if (x2 >= x1)                 /* x    值为     */
   {
     xinc1 = 1;
     xinc2 = 1;
   }
-  else                          /* x坐标值为递减 */
+  else                          /* x    值为 菁  */
   {
     xinc1 = -1;
     xinc2 = -1;
   }
   
-  if (y2 >= y1)                 /* y坐标值为递增 */
+  if (y2 >= y1)                 /* y    值为     */
   {
     yinc1 = 1;
     yinc2 = 1;
   }
-  else                          /* y坐标值为递减 */
+  else                          /* y    值为 菁  */
   {
     yinc1 = -1;
     yinc2 = -1;
   }
   
-  if (deltax >= deltay)         /* 每个 y 坐标值至少有一个x坐标值*/
+  if (deltax >= deltay)         /* 每   y     值      一  x    值*/
   {
-    xinc1 = 0;                  /* 当分子大于或等于分母时不要改变 x */
-    yinc2 = 0;                  /* 不要为每次迭代更改 y */
+    xinc1 = 0;                  /*      哟  诨   诜 母时   ? 谋  x */
+    yinc2 = 0;                  /*   要为每 蔚        y */
     den = deltax;
     num = deltax / 2;
     num_add = deltay;
-    num_pixels = deltax;         /* x比y多的值 */
+    num_pixels = deltax;         /* x  y    ? */
   }
-  else                          /* 每个 x 坐标值至少有一个y坐标值 */
+  else                          /* 每   x     值      一  y    值 */
   {
-    xinc2 = 0;                  /* 不要为每次迭代更改 x */
-    yinc1 = 0;                  /* 当分子大于或等于分母时不要改变 y */
+    xinc2 = 0;                  /*   要为每 蔚        x */
+    yinc1 = 0;                  /*      哟  诨   诜 母时   ? 谋  y */
     den = deltay;
     num = deltay / 2;
     num_add = deltax;
-    num_pixels = deltay;         /* y比x多的值 */
+    num_pixels = deltay;         /* y  x    ? */
   }
   
   for (curpixel = 0; curpixel <= num_pixels; curpixel++)
   {
-    LCD_DrawPixel(x, y, DrawProp[ActiveLayer].TextColor);   /* 绘制当前像素点 */
-    num += num_add;                            /* 在分数的基础上增加分子 */
-    if (num >= den)                           /* 检查分子大于或等于分母 */
+    LCD_DrawPixel(x, y, DrawProp[ActiveLayer].TextColor);   /*    频 前   氐  */
+    num += num_add;                            /*  诜    幕        臃    */
+    if (num >= den)                           /*      哟  诨   诜  ? */
     {
-      num -= den;                             /* 计算新的分子值 */
-      x += xinc1;                             /* x值递增 */
-      y += yinc1;                             /* y值递增 */
+      num -= den;                             /*      碌姆   值 */
+      x += xinc1;                             /* x值     */
+      y += yinc1;                             /* y值     */
     }
-    x += xinc2;                               /* y值递增 */
-    y += yinc2;                               /* y值递增 */
+    x += xinc2;                               /* y值     */
+    y += yinc2;                               /* y值     */
   }
 }
 
 /**
-  * @brief  绘制一个矩形
-  * @param  Xpos:   X轴坐标
-  * @param  Ypos:   Y轴坐标
-  * @param  Width:  矩形宽度  
-  * @param  Height: 矩形高度
-  * @retval 无
+  * @brief      一      
+  * @param  Xpos:   X      
+  * @param  Ypos:   Y      
+  * @param  Width:     慰     
+  * @param  Height:    胃叨 
+  * @retval   
   */
 void LCD_DrawRect(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height)
 {
-  /* 绘制水平线 */
+  /*     水平   */
   LCD_DrawHLine(Xpos, Ypos, Width);
   LCD_DrawHLine(Xpos, (Ypos+ Height), Width);
   
-  /* 绘制垂直线 */
+  /*    拼 直   */
   LCD_DrawVLine(Xpos, Ypos, Height);
   LCD_DrawVLine((Xpos + Width), Ypos, Height);
 }
 
 /**
-  * @brief  绘制一个圆形
-  * @param  Xpos:   X轴坐标
-  * @param  Ypos:   Y轴坐标
-  * @param  Radius: 圆的半径
-  * @retval 无
+  * @brief      一  圆  
+  * @param  Xpos:   X      
+  * @param  Ypos:   Y      
+  * @param  Radius: 圆 陌刖?
+  * @retval   
   */
 void LCD_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t Radius)
 {
-  int32_t   decision;    /* 决策变量 */ 
-  uint32_t  current_x;   /* 当前x坐标值 */
-  uint32_t  current_y;   /* 当前y坐标值 */
+  int32_t   decision;    /*    弑    */ 
+  uint32_t  current_x;   /*   前x    值 */
+  uint32_t  current_y;   /*   前y    值 */
   
   decision = 3 - (Radius << 1);
   current_x = 0;
@@ -832,10 +818,10 @@ void LCD_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t Radius)
 }
 
 /**
-  * @brief  绘制一条折线
-  * @param  Points: 指向点数组的指针
-  * @param  PointCount: 点数
-  * @retval 无
+  * @brief      一      
+  * @param  Points: 指        指  
+  * @param  PointCount:     
+  * @retval   
   */
 void LCD_DrawPolygon(pPoint Points, uint16_t PointCount)
 {
@@ -858,12 +844,12 @@ void LCD_DrawPolygon(pPoint Points, uint16_t PointCount)
 }
 
 /**
-  * @brief  绘制一个椭圆
-  * @param  Xpos:   X轴坐标
-  * @param  Ypos:   Y轴坐标
-  * @param  XRadius: 椭圆X轴半径
-  * @param  YRadius: 椭圆Y轴半径
-  * @retval 无
+  * @brief      一    圆
+  * @param  Xpos:   X      
+  * @param  Ypos:   Y      
+  * @param  XRadius:   圆X   ?
+  * @param  YRadius:   圆Y   ?
+  * @retval   
   */
 void LCD_DrawEllipse(int Xpos, int Ypos, int XRadius, int YRadius)
 {
@@ -892,11 +878,11 @@ void LCD_DrawEllipse(int Xpos, int Ypos, int XRadius, int YRadius)
 }
 
 /**
-  * @brief  绘制一个点
-  * @param  Xpos:   X轴坐标
-  * @param  Ypos:   Y轴坐标
-  * @param  RGB_Code: 像素颜色值
-  * @retval 无
+  * @brief      一    
+  * @param  Xpos:   X      
+  * @param  Ypos:   Y      
+  * @param  RGB_Code:       色值
+  * @retval   
   */
 void LCD_DrawPixel(uint16_t Xpos, uint16_t Ypos, uint32_t RGB_Code)
 {
@@ -925,11 +911,11 @@ void LCD_DrawPixel(uint16_t Xpos, uint16_t Ypos, uint32_t RGB_Code)
 }
 
 /**
-  * @brief  绘制一幅从内部flash加载的ARGB888(32 bits per pixel)格式的图片
-  * @param  Xpos: Bmp在液晶上X 轴坐标
-  * @param  Ypos: Bmp在液晶上Y 轴坐标
-  * @param  pbmp: 指针指向存在内部flash的Bmp图片的首地址
-  * @retval 无
+  * @brief      一     诓 flash   氐 ARGB888(32 bits per pixel)  式  图片
+  * @param  Xpos: Bmp  液    X       
+  * @param  Ypos: Bmp  液    Y       
+  * @param  pbmp: 指  指      诓 flash  Bmp图片   椎 址
+  * @retval   
   */
 void LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp)
 {
@@ -937,25 +923,25 @@ void LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp)
   uint32_t address;
   uint32_t input_color_mode = 0;
   
-  /* 获取位图数据的基地址 */
+  /*   取位图   莸幕   址 */
   index = *(__IO uint16_t *) (pbmp + 10);
   index |= (*(__IO uint16_t *) (pbmp + 12)) << 16;
   
-  /* 获取位图宽度 */
+  /*   取位图     */
   width = *(uint16_t *) (pbmp + 18);
   width |= (*(uint16_t *) (pbmp + 20)) << 16;
   
-  /* 获取位图高度 */
+  /*   取位图 叨  */
   height = *(uint16_t *) (pbmp + 22);
   height |= (*(uint16_t *) (pbmp + 24)) << 16; 
   
-  /* 获取像素个数 */
+  /*   取   馗    */
   bit_pixel = *(uint16_t *) (pbmp + 28);   
   
-  /* 设定地址 */
+  /*  瓒?  址 */
   address = Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress + (((LCD_GetXSize()*Ypos) + Xpos)*(4));
   
-  /*判断层输入像素格式 */    
+  /* 卸喜        馗 式 */    
   if ((bit_pixel/8) == 4)
   {
     input_color_mode = CM_ARGB8888;
@@ -969,37 +955,37 @@ void LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp)
     input_color_mode = CM_RGB888;
   }
   
-  /* 绕过位图的帧头 */
+  /*  乒 位图  帧头 */
   pbmp += (index + (width * (height - 1) * (bit_pixel/8)));  
   
-  /* 将图片转换为 ARGB8888 像素格式 */
+  /*   图片转  为 ARGB8888    馗 式 */
   for(index=0; index < height; index++)
   {
-    /* 像素格式转换 */
+    /*    馗 式转   */
     LL_ConvertLineToARGB8888((uint32_t *)pbmp, (uint32_t *)address, width, input_color_mode);
     
-    /* 递增源和目标缓冲区 */
+    /*     源  目 昊?     */
     address+=  (LCD_GetXSize()*4);
     pbmp -= width*(bit_pixel/8);
   } 
 }
 
 /**
-  * @brief  填充一个实心矩形
-  * @param  Xpos: X坐标值
-  * @param  Ypos: Y坐标值
-  * @param  Width:  矩形宽度 
-  * @param  Height: 矩形高度
-  * @retval 无
+  * @brief     一  实 木   ?
+  * @param  Xpos: X    值
+  * @param  Ypos: Y    值
+  * @param  Width:     慰    
+  * @param  Height:    胃叨 
+  * @retval   
   */
 void LCD_FillRect(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height)
 {
   uint32_t  x_address = 0;
   
-  /* 设置文字颜色 */
+  /*           色 */
   LCD_SetTextColor(DrawProp[ActiveLayer].TextColor);
   
-  /* 设置矩形开始地址 */
+  /*    镁  慰 始  址 */
     if(Ltdc_Handler.LayerCfg[ActiveLayer].PixelFormat == LTDC_PIXEL_FORMAT_ARGB8888)
   {
     x_address = (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress) + 4*(LCD_GetXSize()*Ypos + Xpos);
@@ -1018,22 +1004,22 @@ void LCD_FillRect(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height)
   {
     x_address = (Ltdc_Handler.LayerCfg[ActiveLayer].FBStartAdress) + 2*(LCD_GetXSize()*Ypos + Xpos);
   }	
-  /* 填充矩形 */
+  /*        */
   LL_FillBuffer(ActiveLayer, (uint32_t *)x_address, Width, Height, (LCD_GetXSize() - Width), DrawProp[ActiveLayer].TextColor);
 }
 
 /**
-  * @brief  填充一个实心圆
-  * @param  Xpos: X坐标值
-  * @param  Ypos: Y坐标值
-  * @param  Radius: 圆的半径
-  * @retval 无
+  * @brief     一  实   ?
+  * @param  Xpos: X    值
+  * @param  Ypos: Y    值
+  * @param  Radius: 圆 陌刖?
+  * @retval   
   */
 void LCD_FillCircle(uint16_t Xpos, uint16_t Ypos, uint16_t Radius)
 {
-  int32_t   decision;    /* 决策变量 */ 
-  uint32_t  current_x;   /* 当前x坐标值 */
-  uint32_t  current_y;   /* 当前y坐标值 */
+  int32_t   decision;    /*    弑    */ 
+  uint32_t  current_x;   /*   前x    值 */
+  uint32_t  current_y;   /*   前y    值 */
   
   decision = 3 - (Radius << 1);
   
@@ -1072,10 +1058,10 @@ void LCD_FillCircle(uint16_t Xpos, uint16_t Ypos, uint16_t Radius)
 }
 
 /**
-  * @brief  绘制多边形
-  * @param  Points: 指向点数组的指针
-  * @param  PointCount: 点数
-  * @retval 无
+  * @brief     贫    ?
+  * @param  Points: 指        指  
+  * @param  PointCount:     
+  * @retval   
   */
 void LCD_FillPolygon(pPoint Points, uint16_t PointCount)
 {
@@ -1138,12 +1124,12 @@ void LCD_FillPolygon(pPoint Points, uint16_t PointCount)
 }
 
 /**
-  * @brief  填充一个实心椭圆
-  * @param  Xpos:   X轴坐标
-  * @param  Ypos:   Y轴坐标
-  * @param  XRadius: 椭圆X轴半径
-  * @param  YRadius: 椭圆Y轴半径
-  * @retval 无
+  * @brief     一  实     ?
+  * @param  Xpos:   X      
+  * @param  Ypos:   Y      
+  * @param  XRadius:   圆X   ?
+  * @param  YRadius:   圆Y   ?
+  * @retval   
   */
 void LCD_FillEllipse(int Xpos, int Ypos, int XRadius, int YRadius)
 {
@@ -1172,44 +1158,44 @@ void LCD_FillEllipse(int Xpos, int Ypos, int XRadius, int YRadius)
 }
 
 /**
-  * @brief  使能显示
-  * @retval 无
+  * @brief  使    示
+  * @retval   
   */
 void LCD_DisplayOn(void)
 {
-  /* 开显示 */
+  /*     示 */
   __HAL_LTDC_ENABLE(&Ltdc_Handler);
-  HAL_GPIO_WritePin(LTDC_DISP_GPIO_PORT, LTDC_DISP_GPIO_PIN, GPIO_PIN_SET);/* LCD_DISP使能*/
-  HAL_GPIO_WritePin(LTDC_BL_GPIO_PORT, LTDC_BL_GPIO_PIN, GPIO_PIN_SET);  /* 开背光*/
+  HAL_GPIO_WritePin(LTDC_DISP_GPIO_PORT, LTDC_DISP_GPIO_PIN, GPIO_PIN_SET);/* LCD_DISP使  */
+  HAL_GPIO_WritePin(LTDC_BL_GPIO_PORT, LTDC_BL_GPIO_PIN, GPIO_PIN_SET);  /*       */
 }
 
 /**
-  * @brief  禁能显示
-  * @retval 无
+  * @brief        示
+  * @retval   
   */
 void LCD_DisplayOff(void)
 {
-  /* 关显示 */
+  /*     示 */
   __HAL_LTDC_DISABLE(&Ltdc_Handler);
-  HAL_GPIO_WritePin(LTDC_DISP_GPIO_PORT, LTDC_DISP_GPIO_PIN, GPIO_PIN_RESET); /* LCD_DISP禁能*/
-  HAL_GPIO_WritePin(LTDC_BL_GPIO_PORT, LTDC_BL_GPIO_PIN, GPIO_PIN_RESET);/*关背光*/
+  HAL_GPIO_WritePin(LTDC_DISP_GPIO_PORT, LTDC_DISP_GPIO_PIN, GPIO_PIN_RESET); /* LCD_DISP    */
+  HAL_GPIO_WritePin(LTDC_BL_GPIO_PORT, LTDC_BL_GPIO_PIN, GPIO_PIN_RESET);/* 乇   */
 }
 
 /**
-  * @brief  时钟配置
-  * @param  hltdc: LTDC句柄
+  * @brief  时      
+  * @param  hltdc: LTDC   ?
   * @param  Params
-  * @retval 无
+  * @retval   
   */
 void LCD_ClockConfig(LTDC_HandleTypeDef *hltdc, void *Params)
 {
   static RCC_PeriphCLKInitTypeDef  periph_clk_init_struct;
 
-  /* LCD时钟配置 */
+  /* LCD时       */
   /* PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz */
   /* PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 192 Mhz */
   /* PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 192/5 = 38.4 Mhz */
-  /* LTDC时钟频率 = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz */
+  /* LTDC时  频   = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 38.4/4 = 9.6Mhz */
   periph_clk_init_struct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
   periph_clk_init_struct.PLLSAI.PLLSAIN = 400;
   periph_clk_init_struct.PLLSAI.PLLSAIR = 4;
@@ -1219,15 +1205,15 @@ void LCD_ClockConfig(LTDC_HandleTypeDef *hltdc, void *Params)
 
 
 /*******************************************************************************
-                            局部函数
+                             植     
 *******************************************************************************/
 
 /**
-  * @brief  显示一个字符
-  * @param  Xpos: 显示字符的行位置
-  * @param  Ypos: 列起始位置
-  * @param  c: 指向字体数据的指针
-  * @retval 无
+  * @brief    示一   址 
+  * @param  Xpos:   示 址     位  
+  * @param  Ypos:     始位  
+  * @param  c: 指         莸 指  
+  * @retval   
   */
 static void DrawChar(uint16_t Xpos, uint16_t Ypos, const uint8_t *c)
 {
@@ -1237,39 +1223,39 @@ static void DrawChar(uint16_t Xpos, uint16_t Ypos, const uint8_t *c)
   uint8_t  *pchar;
   uint32_t line;
   
-  height = DrawProp[ActiveLayer].pFont->Height;//获取正在使用字体高度
-  width  = DrawProp[ActiveLayer].pFont->Width; //获取正在使用字体宽度
+  height = DrawProp[ActiveLayer].pFont->Height;//  取    使      叨 ?
+  width  = DrawProp[ActiveLayer].pFont->Width; //  取    使         ?
   
-  offset =  8 *((width + 7)/8) -  width ;//计算字符的每一行像素的偏移值，实际存储大小-字体宽度
+  offset =  8 *((width + 7)/8) -  width ;//     址   每一     氐 偏  值  实 蚀娲?  小-       ?
   
-  for(i = 0; i < height; i++)//遍历字体高度绘点
+  for(i = 0; i < height; i++)//        叨然  
   {
-    pchar = ((uint8_t *)c + (width + 7)/8 * i);//计算字符的每一行像素的偏移地址
+    pchar = ((uint8_t *)c + (width + 7)/8 * i);//     址   每一     氐 偏 频 址
     
-    switch(((width + 7)/8))//根据字体宽度来提取不同字体的实际像素值
+    switch(((width + 7)/8))//               取   ?     实       ?
     {
       
     case 1:
-      line =  pchar[0];      //提取字体宽度小于8的字符的像素值
+      line =  pchar[0];      //  取       小  ?8   址       值
       break;
       
     case 2:
-      line =  (pchar[0]<< 8) | pchar[1]; //提取字体宽度大于8小于16的字符的像素值     
+      line =  (pchar[0]<< 8) | pchar[1]; //  取      却   ?8小  16   址       值     
       break;
       
     case 3:
     default:
-      line =  (pchar[0]<< 16) | (pchar[1]<< 8) | pchar[2]; //提取字体宽度大于16小于24的字符的像素值     
+      line =  (pchar[0]<< 16) | (pchar[1]<< 8) | pchar[2]; //  取      却   ?16小  24   址       值     
       break;
     } 
     
-    for (j = 0; j < width; j++)//遍历字体宽度绘点
+    for (j = 0; j < width; j++)//          然  
     {
-      if(line & (1 << (width- j + offset- 1))) //根据每一行的像素值及偏移位置按照当前字体颜色进行绘点
+      if(line & (1 << (width- j + offset- 1))) //    每一 械     值  偏  位 冒  盏 前      色   谢  ?
       {
         LCD_DrawPixel((Xpos + j), Ypos, DrawProp[ActiveLayer].TextColor);
       }
-      else//如果这一行没有字体像素则按照背景颜色绘点
+      else//     一  没             毡      ?   ?
       {
         LCD_DrawPixel((Xpos + j), Ypos, DrawProp[ActiveLayer].BackColor);
       } 
@@ -1279,14 +1265,14 @@ static void DrawChar(uint16_t Xpos, uint16_t Ypos, const uint8_t *c)
 }
 
 /**
-  * @brief  填充三角形（基于三点）
-  * @param  x1: 第一点的X坐标值
-  * @param  y1: 第一点的Y坐标值
-  * @param  x2: 第二点的X坐标值
-  * @param  y2: 第二点的Y坐标值
-  * @param  x3: 第三点的X坐标值
-  * @param  y3: 第三点的Y坐标值
-  * @retval 无
+  * @brief          危         ?
+  * @param  x1:   一   X    值
+  * @param  y1:   一   Y    值
+  * @param  x2:  诙    X    值
+  * @param  y2:  诙    Y    值
+  * @param  x3:        X    值
+  * @param  y3:        Y    值
+  * @retval   
   */
 static void FillTriangle(uint16_t x1, uint16_t x2, uint16_t x3, uint16_t y1, uint16_t y2, uint16_t y3)
 { 
@@ -1294,76 +1280,76 @@ static void FillTriangle(uint16_t x1, uint16_t x2, uint16_t x3, uint16_t y1, uin
   yinc1 = 0, yinc2 = 0, den = 0, num = 0, num_add = 0, num_pixels = 0,
   curpixel = 0;
   
-  deltax = ABS(x2 - x1);        /* 求x轴的绝对值 */
-  deltay = ABS(y2 - y1);        /* 求y轴的绝对值 */
-  x = x1;                       /* 第一个像素的x坐标起始值 */
-  y = y1;                       /* 第一个像素的y坐标起始值 */
+  deltax = ABS(x2 - x1);        /*   x  木    ? */
+  deltay = ABS(y2 - y1);        /*   y  木    ? */
+  x = x1;                       /*   一     氐 x      始值 */
+  y = y1;                       /*   一     氐 y      始值 */
   
-  if (x2 >= x1)                 /* x坐标值为递增*/
+  if (x2 >= x1)                 /* x    值为    */
   {
     xinc1 = 1;
     xinc2 = 1;
   }
-  else                          /* x坐标值为递减 */
+  else                          /* x    值为 菁  */
   {
     xinc1 = -1;
     xinc2 = -1;
   }
   
-  if (y2 >= y1)                 /* y坐标值为递增*/
+  if (y2 >= y1)                 /* y    值为    */
   {
     yinc1 = 1;
     yinc2 = 1;
   }
-  else                          /* y坐标值为递减 */
+  else                          /* y    值为 菁  */
   {
     yinc1 = -1;
     yinc2 = -1;
   }
   
-  if (deltax >= deltay)         /* 每个 y 坐标值至少有一个x坐标值*/
+  if (deltax >= deltay)         /* 每   y     值      一  x    值*/
   {
-    xinc1 = 0;                  /* 当分子大于或等于分母时不要改变 x */
-    yinc2 = 0;                  /* 不要为每次迭代更改 y */
+    xinc1 = 0;                  /*      哟  诨   诜 母时   ? 谋  x */
+    yinc2 = 0;                  /*   要为每 蔚        y */
     den = deltax;
     num = deltax / 2;
     num_add = deltay;
-    num_pixels = deltax;         /* x比y多的值 */
+    num_pixels = deltax;         /* x  y    ? */
   }
-  else                          /* 每个 x 坐标值至少有一个y坐标值 */
+  else                          /* 每   x     值      一  y    值 */
   {
-    xinc2 = 0;                  /* 不要为每次迭代更改 x */
-    yinc1 = 0;                  /* 当分子大于或等于分母时不要改变 y */
+    xinc2 = 0;                  /*   要为每 蔚        x */
+    yinc1 = 0;                  /*      哟  诨   诜 母时   ? 谋  y */
     den = deltay;
     num = deltay / 2;
     num_add = deltax;
-    num_pixels = deltay;         /* y比x多的值 */
+    num_pixels = deltay;         /* y  x    ? */
   }
   
   for (curpixel = 0; curpixel <= num_pixels; curpixel++)
   {
     LCD_DrawLine(x, y, x3, y3);
     
-    num += num_add;              /* 在分数的基础上增加分子 */
-    if (num >= den)             /* 判断分子是否大于或等于分母 */
+    num += num_add;              /*  诜    幕        臃    */
+    if (num >= den)             /*  卸戏    欠   诨   诜 母 */
     {
-      num -= den;               /* 计算新的分子值 */
-      x += xinc1;               /* x值递增 */
-      y += yinc1;               /* y值递增 */
+      num -= den;               /*      碌姆   值 */
+      x += xinc1;               /* x值     */
+      y += yinc1;               /* y值     */
     }
-    x += xinc2;                 /* x值递增 */
-    y += yinc2;                 /* y值递增 */
+    x += xinc2;                 /* x值     */
+    y += yinc2;                 /* y值     */
   } 
 }
 
 /**
-  * @brief  填充一个缓冲区
-  * @param  LayerIndex: 当前层
-  * @param  pDst: 指向目标缓冲区指针
-  * @param  xSize: 缓冲区宽度
-  * @param  ySize: 缓冲区高度
-  * @param  OffLine: 偏移量
-  * @param  ColorIndex: 当前颜色
+  * @brief     一        ?
+  * @param  LayerIndex:   前  
+  * @param  pDst: 指  目 昊?    指  
+  * @param  xSize:           
+  * @param  ySize:        叨 
+  * @param  OffLine: 偏    
+  * @param  ColorIndex:   前  色
   * @retval None
   */
 static void LL_FillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine, uint32_t ColorIndex) 
@@ -1394,14 +1380,14 @@ static void LL_FillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint3
   
   Dma2d_Handler.Instance = DMA2D;
   
-  /* DMA2D 初始化 */
+  /* DMA2D   始   */
   if(HAL_DMA2D_Init(&Dma2d_Handler) == HAL_OK) 
   {
     if(HAL_DMA2D_ConfigLayer(&Dma2d_Handler, LayerIndex) == HAL_OK) 
     {
       if (HAL_DMA2D_Start(&Dma2d_Handler, ColorIndex, (uint32_t)pDst, xSize, ySize) == HAL_OK)
       {
-        /* DMA轮询传输 */  
+        /* DMA  询     */  
         HAL_DMA2D_PollForTransfer(&Dma2d_Handler, 100);
       }
     }
@@ -1409,16 +1395,16 @@ static void LL_FillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint3
 }
 
 /**
-  * @brief  转换一行为ARGB8888像素格式
-  * @param  pSrc: 指向源缓冲区的指针
-  * @param  pDst: 输出颜色
-  * @param  xSize: 缓冲区宽度
-  * @param  ColorMode: 输入颜色模式   
-  * @retval 无
+  * @brief  转  一  为ARGB8888   馗 式
+  * @param  pSrc: 指  源        指  
+  * @param  pDst:       ?
+  * @param  xSize:           
+  * @param  ColorMode:       色模式   
+  * @retval   
   */
 static void LL_ConvertLineToARGB8888(void *pSrc, void *pDst, uint32_t xSize, uint32_t ColorMode)
 {    
-  /* 配置DMA2D模式,颜色模式和输出偏移 */
+  /*     DMA2D模式,  色模式      ?   */
   Dma2d_Handler.Init.Mode         = DMA2D_M2M_PFC;
   Dma2d_Handler.Init.ColorMode    = DMA2D_ARGB8888;
   Dma2d_Handler.Init.OutputOffset = 0;     
@@ -1431,14 +1417,14 @@ static void LL_ConvertLineToARGB8888(void *pSrc, void *pDst, uint32_t xSize, uin
   
   Dma2d_Handler.Instance = DMA2D; 
   
-  /* DMA2D 初始化 */
+  /* DMA2D   始   */
   if(HAL_DMA2D_Init(&Dma2d_Handler) == HAL_OK) 
   {
     if(HAL_DMA2D_ConfigLayer(&Dma2d_Handler, 1) == HAL_OK) 
     {
       if (HAL_DMA2D_Start(&Dma2d_Handler, (uint32_t)pSrc, (uint32_t)pDst, xSize, 1) == HAL_OK)
       {
-        /* DMA轮询传输*/  
+        /* DMA  询    */  
         HAL_DMA2D_PollForTransfer(&Dma2d_Handler, 10);
       }
     }

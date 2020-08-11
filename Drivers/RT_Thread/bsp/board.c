@@ -76,6 +76,7 @@ void rt_hw_board_init()
     bsp_key_init();
     dht11_init();
     SDRAM_Init();
+    bsp_adc_init();
     
 #if 0
     bsp_gizwits_init();

@@ -7,16 +7,14 @@
 #include "fonts.h"
 #include "main.h"
 
-/* LCD 物理像素大小 (宽度和高度) */
 #define  LCD_PIXEL_WIDTH    ((uint16_t)800)
 #define  LCD_PIXEL_HEIGHT   ((uint16_t)480)
 
-/* LCD 层像素格式*/
-#define ARGB8888 	LTDC_PIXEL_FORMAT_ARGB8888  /*!< ARGB8888 LTDC像素格式 */
-#define RGB888 		LTDC_PIXEL_FORMAT_RGB888    /*!< RGB888 LTDC像素格式   */
-#define RGB565 		LTDC_PIXEL_FORMAT_RGB565    /*!< RGB565 LTDC像素格式   */
-#define ARGB1555 	LTDC_PIXEL_FORMAT_ARGB1555  /*!< ARGB1555 LTDC像素格式 */
-#define ARGB4444 	LTDC_PIXEL_FORMAT_ARGB4444  /*!< ARGB4444 LTDC像素格式 */
+#define ARGB8888 	LTDC_PIXEL_FORMAT_ARGB8888  /*!< ARGB8888 LTDC   馗 式 */
+#define RGB888 		LTDC_PIXEL_FORMAT_RGB888    /*!< RGB888 LTDC   馗 式   */
+#define RGB565 		LTDC_PIXEL_FORMAT_RGB565    /*!< RGB565 LTDC   馗 式   */
+#define ARGB1555 	LTDC_PIXEL_FORMAT_ARGB1555  /*!< ARGB1555 LTDC   馗 式 */
+#define ARGB4444 	LTDC_PIXEL_FORMAT_ARGB4444  /*!< ARGB4444 LTDC   馗 式 */
 
 typedef struct 
 { 
@@ -32,17 +30,16 @@ typedef struct
 }Point, * pPoint; 
 
 /** 
-  * @brief  字体对齐模式  
+  * @brief         模式  
   */ 
 typedef enum
 {
-  CENTER_MODE             = 0x01,    /* 居中对齐 */
-  RIGHT_MODE              = 0x02,    /* 右对齐   */
-  LEFT_MODE               = 0x03     /* 左对齐   */
+  CENTER_MODE             = 0x01,    /*    卸    */
+  RIGHT_MODE              = 0x02,    /*  叶      */
+  LEFT_MODE               = 0x03     /*         */
 }Text_AlignModeTypdef;
 
 #define MAX_LAYER_NUMBER       ((uint32_t)2)
-
 #define LTDC_ACTIVE_LAYER	     ((uint32_t)1) /* Layer 1 */
 /** 
   * @brief  LCD status structure definition  
@@ -90,7 +87,7 @@ typedef enum
   */ 
 #define LCD_DEFAULT_FONT        Font24 
 
-//红色数据线
+//  色      
 #define LTDC_R0_GPIO_PORT        	GPIOH
 #define LTDC_R0_GPIO_CLK_ENABLE()   __GPIOH_CLK_ENABLE()
 #define LTDC_R0_GPIO_PIN         	GPIO_PIN_2
@@ -130,7 +127,7 @@ typedef enum
 #define LTDC_R7_GPIO_CLK_ENABLE()	__GPIOG_CLK_ENABLE()
 #define LTDC_R7_GPIO_PIN         	GPIO_PIN_6
 #define LTDC_R7_AF			        GPIO_AF14_LTDC
-//绿色数据线
+//  色      
 #define LTDC_G0_GPIO_PORT        	GPIOE
 #define LTDC_G0_GPIO_CLK_ENABLE()	__GPIOE_CLK_ENABLE()
 #define LTDC_G0_GPIO_PIN         	GPIO_PIN_5
@@ -171,7 +168,7 @@ typedef enum
 #define LTDC_G7_GPIO_PIN         	GPIO_PIN_2
 #define LTDC_G7_AF			        GPIO_AF14_LTDC
 
-//蓝色数据线
+//  色      
 #define LTDC_B0_GPIO_PORT        	GPIOE
 #define LTDC_B0_GPIO_CLK_ENABLE()  	__GPIOE_CLK_ENABLE()
 #define LTDC_B0_GPIO_PIN         	GPIO_PIN_4
@@ -212,33 +209,33 @@ typedef enum
 #define LTDC_B7_GPIO_PIN         	GPIO_PIN_9
 #define LTDC_B7_AF			        GPIO_AF14_LTDC
 
-//控制信号线
-/*像素时钟CLK*/
+//     藕   
+/*    时  CLK*/
 #define LTDC_CLK_GPIO_PORT              GPIOG
 #define LTDC_CLK_GPIO_CLK_ENABLE()      __GPIOG_CLK_ENABLE()
 #define LTDC_CLK_GPIO_PIN               GPIO_PIN_7
 #define LTDC_CLK_AF			            GPIO_AF14_LTDC
-/*水平同步信号HSYNC*/
+/*水平同   藕 HSYNC*/
 #define LTDC_HSYNC_GPIO_PORT            GPIOI
 #define LTDC_HSYNC_GPIO_CLK_ENABLE()    __GPIOI_CLK_ENABLE()
 #define LTDC_HSYNC_GPIO_PIN             GPIO_PIN_10
 #define LTDC_HSYNC_AF			        GPIO_AF14_LTDC
-/*垂直同步信号VSYNC*/
+/*  直同   藕 VSYNC*/
 #define LTDC_VSYNC_GPIO_PORT            GPIOI
 #define LTDC_VSYNC_GPIO_CLK_ENABLE()    __GPIOI_CLK_ENABLE()
 #define LTDC_VSYNC_GPIO_PIN             GPIO_PIN_9
 #define LTDC_VSYNC_AF			        GPIO_AF14_LTDC
 
-/*数据使能信号DE*/
+/*    使   藕 DE*/
 #define LTDC_DE_GPIO_PORT               GPIOF
 #define LTDC_DE_GPIO_CLK_ENABLE()       __GPIOF_CLK_ENABLE()
 #define LTDC_DE_GPIO_PIN                GPIO_PIN_10
 #define LTDC_DE_AF			            GPIO_AF14_LTDC
-/*液晶屏使能信号DISP，高电平使能*/
+/*液    使   藕 DISP   叩 平使  */
 #define LTDC_DISP_GPIO_PORT             GPIOD
 #define LTDC_DISP_GPIO_CLK_ENABLE()     __GPIOD_CLK_ENABLE()
 #define LTDC_DISP_GPIO_PIN              GPIO_PIN_4
-/*液晶屏背光信号，高电平使能*/
+/*液         藕牛  叩 平使  */
 #define LTDC_BL_GPIO_PORT               GPIOD
 #define LTDC_BL_GPIO_CLK_ENABLE()       __GPIOD_CLK_ENABLE()
 #define LTDC_BL_GPIO_PIN                GPIO_PIN_7
