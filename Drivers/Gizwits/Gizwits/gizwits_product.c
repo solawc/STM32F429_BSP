@@ -286,7 +286,7 @@ int32_t uartWrite(uint8_t *buf, uint32_t len)
         //USART_SendData(UART, buf[i]);//STM32 test demo
         //Serial port to achieve the function, the buf[i] sent to the module
         HAL_UART_Transmit(&huart3,&buf[i],1,1000);
-        while(__HAL_UART_GET_FLAG(&huart3,UART_FLAG_TXE)== RESET); //wait the uart send finsh
+         //wait the uart send finsh
 
         if(i >=2 && buf[i] == 0xFF)
         {
