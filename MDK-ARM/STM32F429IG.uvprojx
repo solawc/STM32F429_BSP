@@ -627,6 +627,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP_Driver\bsp_adc.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_ltdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP_Driver\lcd\lcd\bsp_ltdc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
