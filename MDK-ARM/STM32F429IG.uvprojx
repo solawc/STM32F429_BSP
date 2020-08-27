@@ -628,9 +628,9 @@
               <FilePath>..\Drivers\BSP_Driver\bsp_adc.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_ltdc.c</FileName>
+              <FileName>bsp_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP_Driver\lcd\lcd\bsp_ltdc.c</FilePath>
+              <FilePath>..\Drivers\BSP_Driver\bsp_dma.c</FilePath>
             </File>
           </Files>
         </Group>

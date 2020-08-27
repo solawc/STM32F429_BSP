@@ -55,7 +55,7 @@ extern "C" {
 #include "dht11.h"
 #include "board.h"
 #include "rt_app.h"
-
+#include "bsp_dma.h"
 
 /* USER CODE END Includes */
 

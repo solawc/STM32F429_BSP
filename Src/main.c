@@ -32,7 +32,7 @@ int main(void)
 	led_task_init();
 	dht11_task_init();
 	adc_v_task_init();  
-	DEBUG_PRINT("task cread fish");
+	DEBUG_DMA_PRINT("task cread fish");
 }
 
 /**

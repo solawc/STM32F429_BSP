@@ -3,7 +3,10 @@
 void bsp_debug_usart_init(void)
 {
     MX_USART1_UART_Init();
-
+	
+	#if USR_USART1_DMA
+	bsp_usart1_dma2_init();
+	#endif
     // __HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE);  
     // HAL_NVIC_SetPriority(USART1_IRQn, 0, 1);
     // HAL_NVIC_EnableIRQ(USART1_IRQn);
