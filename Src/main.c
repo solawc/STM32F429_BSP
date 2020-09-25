@@ -28,10 +28,19 @@
 
 int main(void)
 {
-	key_task_init();
-	led_task_init();
-	dht11_task_init();
-	adc_v_task_init();  
+	HAL_Init();
+	SystemClock_Config();
+      
+	MX_GPIO_Init();
+	bsp_debug_usart_init();
+	//bsp_led_init();
+	bsp_led_pwm_mode_init();
+	bsp_key_init();
+	    // dht11_init();
+	SDRAM_Init();
+
+	//dht11_task_init();
+
 	DEBUG_DMA_PRINT("task cread fish");
 }
 
@@ -100,10 +109,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == TIM6) {
     
-    rt_interrupt_enter();
     HAL_IncTick();
-    // gizTimerMs();
-    rt_interrupt_leave();
   }
 }
 

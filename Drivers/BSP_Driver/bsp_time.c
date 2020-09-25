@@ -26,15 +26,12 @@ void bsp_time7_init(uint16_t arr,uint16_t psc)
 
 void TIM7_IRQHandler(void)
 {
-    rt_interrupt_enter();
     if(__HAL_TIM_GET_FLAG(&htim7, TIM_FLAG_UPDATE) != RESET)
     {
         if(__HAL_TIM_GET_IT_SOURCE(&htim7, TIM_IT_UPDATE) !=RESET)
         {
-            __HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);
-            gizTimerMs();
+            __HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE); 
         }
     }
-    rt_interrupt_leave();
 }
 

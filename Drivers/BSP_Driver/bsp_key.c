@@ -63,13 +63,11 @@ void bsp_key1_thread_callback(void)
 {
     DEBUG_PRINT("key1 down");
     DEBUG_PRINT("Set AIRLINK MODE");
-    gizwitsSetMode(WIFI_AIRLINK_MODE);
 }
 
 void bsp_key2_thread_callback(void)
 {
     DEBUG_PRINT("key2 down");
     DEBUG_PRINT("Set SOFTAP MODE");
-    gizwitsSetMode(WIFI_SOFTAP_MODE);
 }
 
