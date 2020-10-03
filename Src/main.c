@@ -36,12 +36,14 @@ int main(void)
 	//bsp_led_init();
 	bsp_led_pwm_mode_init();
 	bsp_key_init();
-	    // dht11_init();
 	SDRAM_Init();
-
-	//dht11_task_init();
-
 	DEBUG_DMA_PRINT("task cread fish");
+    
+    while(1)
+    {
+        
+    
+    }
 }
 
 /**

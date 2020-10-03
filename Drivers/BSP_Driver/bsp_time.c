@@ -7,6 +7,7 @@
 #include "bsp_time.h"
 
 TIM_HandleTypeDef htim7; 
+TIM_HandleTypeDef htim1; 
 
 void bsp_time7_init(uint16_t arr,uint16_t psc)
 {
@@ -34,4 +35,31 @@ void TIM7_IRQHandler(void)
         }
     }
 }
+
+void bsp_tim1_init(uint16_t arr,uint16_t psc)
+{   
+    TIM_OC_InitTypeDef sConfig;
+    
+    __HAL_RCC_TIM1_CLK_ENABLE();
+    
+    htim1.Instance=TIM1; 
+    htim1.Init.Prescaler=psc; 
+    htim1.Init.CounterMode=TIM_COUNTERMODE_UP; 
+    htim1.Init.Period=arr; 
+    htim1.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+    HAL_TIM_PWM_Init(&htim1);
+   
+    sConfig.OCMode = TIM_OCMODE_PWM1;
+    sConfig.OCPolarity = TIM_OCPOLARITY_HIGH;
+    sConfig.Pulse = arr/2;
+    HAL_TIM_PWM_ConfigChannel(&htim1,&sConfig,TIM_CHANNEL_1);
+    
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+
+
+    /* GPIO_Config */
+}
+
+
+
 
