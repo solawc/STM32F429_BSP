@@ -56,7 +56,8 @@ extern "C" {
 #include "board.h"
 #include "rt_app.h"
 #include "bsp_dma.h"
-
+#include "bsp_spi.h"
+#include "w25q64.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

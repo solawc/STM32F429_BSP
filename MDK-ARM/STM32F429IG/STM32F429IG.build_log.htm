@@ -21,21 +21,21 @@ Target DLL:      Segger\JL2CM3.dll V2.99.29.0
 Dialog DLL:      TCM.DLL V1.35.1.0
  
 <h2>Project:</h2>
-E:\GitHub\STM32\STM32F429_BSP\MDK-ARM\STM32F429IG.uvprojx
-Project File Date:  09/27/2020
+E:\GitHub\STM32\STM32F429\STM32F429_BSP\MDK-ARM\STM32F429IG.uvprojx
+Project File Date:  11/14/2020
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'STM32F429IG'
-compiling bsp_spi.c...
 compiling main.c...
+../Src/main.c(51): warning:  #870-D: invalid multibyte character sequence
+      DEBUG_PRINT("》FLASH还没有文件系统，即将进行格式�?...\r\n");
+../Src/main.c(73): warning:  #870-D: invalid multibyte character sequence
+      DEBUG_PRINT("！！外部Flash挂载文件系统失败�?(%d)\r\n", res_flash);
+../Src/main.c: 2 warnings, 0 errors
 linking...
-STM32F429IG\STM32F429IG.axf: Error: L6218E: Undefined symbol HAL_SPI_Init (referred from bsp_spi.o).
-STM32F429IG\STM32F429IG.axf: Error: L6218E: Undefined symbol HAL_SPI_TransmitReceive (referred from bsp_spi.o).
-Not enough information to list image symbols.
-Not enough information to list load addresses in the image map.
-Finished: 2 information, 0 warning and 2 error messages.
-"STM32F429IG\STM32F429IG.axf" - 2 Error(s), 0 Warning(s).
+Program Size: Code=14664 RO-data=856 RW-data=56 ZI-data=2259448  
+"STM32F429IG\STM32F429IG.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -58,8 +58,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.1.1
-Target not created.
-Build Time Elapsed:  00:00:06
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

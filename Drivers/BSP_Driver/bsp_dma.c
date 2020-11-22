@@ -16,16 +16,16 @@ uint8_t bsp_usart1_dma2_init(void)
 	HAL_StatusTypeDef STATUS = HAL_ERROR; 
 	//__HAL_RCC_DMA2_CLK_ENABLE();
 	__DMA2_CLK_ENABLE();
-	
+    
 	hdma2_usart1.Instance = DMA2_Stream7;
 	hdma2_usart1.Init.Channel = DMA_CHANNEL_4;
-	hdma2_usart1.Init.Direction = DMA_MEMORY_TO_PERIPH; //内存到外设
+	hdma2_usart1.Init.Direction = DMA_MEMORY_TO_PERIPH; //
 	hdma2_usart1.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
 	hdma2_usart1.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
 	hdma2_usart1.Init.MemBurst = DMA_MBURST_SINGLE;
 	hdma2_usart1.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;//1BYTE = 8BIT
-	hdma2_usart1.Init.MemInc = DMA_MINC_ENABLE; //使能内存自增
-	hdma2_usart1.Init.Mode = DMA_NORMAL;	//正常模式
+	hdma2_usart1.Init.MemInc = DMA_MINC_ENABLE; //
+	hdma2_usart1.Init.Mode = DMA_NORMAL;	//
 	hdma2_usart1.Init.PeriphBurst = DMA_PBURST_SINGLE;
 	hdma2_usart1.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
 	hdma2_usart1.Init.PeriphInc = DMA_PINC_DISABLE;

@@ -29,7 +29,7 @@ int fputc(int ch, FILE *f)
 #if USE_BLUETOOSE
     HAL_UART_Transmit(&huart3, (uint8_t *)&ch, sizeof(ch), 1000);
 #else
-    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, sizeof(ch), 1000);
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 1000);
 #endif
 
   return ch;

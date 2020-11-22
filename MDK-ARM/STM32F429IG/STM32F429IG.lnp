@@ -31,6 +31,7 @@
 "stm32f429ig\stm32f4xx_ll_fmc.o"
 "stm32f429ig\stm32f4xx_hal_adc.o"
 "stm32f429ig\stm32f4xx_hal_adc_ex.o"
+"stm32f429ig\stm32f4xx_hal_spi.o"
 "stm32f429ig\system_stm32f4xx.o"
 "stm32f429ig\bsp_led.o"
 "stm32f429ig\bsp_key.o"
@@ -44,6 +45,11 @@
 "stm32f429ig\bsp_adc.o"
 "stm32f429ig\bsp_dma.o"
 "stm32f429ig\bsp_spi.o"
+"stm32f429ig\w25q64.o"
+"stm32f429ig\diskio.o"
+"stm32f429ig\ff.o"
+"stm32f429ig\ffsystem.o"
+"stm32f429ig\ffunicode.o"
 --library_type=microlib --strict --scatter "STM32F429IG\STM32F429IG.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

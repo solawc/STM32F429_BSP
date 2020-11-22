@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\Drivers\BSP_Driver;..\Drivers\RT_Thread\bsp;..\Drivers\RT_Thread\components\finsh;..\Drivers\RT_Thread\include;..\Drivers\RT_Thread\include\libc;..\Drivers\RT_Thread\app;..\Drivers\Gizwits\Gizwits;..\Drivers\Gizwits\Utils;..\Drivers\BSP_Driver\mpu6050;..\Drivers\BSP_Driver\lcd\fonts;..\Drivers\BSP_Driver\lcd\lcd;..\Drivers\BSP_Driver\lcd\sdram;..\Drivers\BSP_Driver\lcd\touch</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\Drivers\BSP_Driver;..\Drivers\RT_Thread\bsp;..\Drivers\RT_Thread\components\finsh;..\Drivers\RT_Thread\include;..\Drivers\RT_Thread\include\libc;..\Drivers\RT_Thread\app;..\Drivers\Gizwits\Gizwits;..\Drivers\Gizwits\Utils;..\Drivers\BSP_Driver\mpu6050;..\Drivers\BSP_Driver\lcd\fonts;..\Drivers\BSP_Driver\lcd\lcd;..\Drivers\BSP_Driver\lcd\sdram;..\Drivers\BSP_Driver\lcd\touch;..\Drivers\BSP_Driver\fatfs_04</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -551,6 +551,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -625,6 +630,36 @@
               <FileName>bsp_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\BSP_Driver\bsp_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25q64.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP_Driver\w25q64.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/BSP_Driver/fatfs</GroupName>
+          <Files>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP_Driver\fatfs_04\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP_Driver\fatfs_04\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP_Driver\fatfs_04\ffsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP_Driver\fatfs_04\ffunicode.c</FilePath>
             </File>
           </Files>
         </Group>

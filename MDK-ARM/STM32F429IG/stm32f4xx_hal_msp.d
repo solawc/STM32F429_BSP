@@ -77,3 +77,5 @@ stm32f429ig\stm32f4xx_hal_msp.o: ..\Drivers\RT_Thread\include\rtthread.h
 stm32f429ig\stm32f4xx_hal_msp.o: ..\Drivers\RT_Thread\components\finsh\finsh_api.h
 stm32f429ig\stm32f4xx_hal_msp.o: ..\Drivers\RT_Thread\app\rt_app.h
 stm32f429ig\stm32f4xx_hal_msp.o: ..\Drivers\BSP_Driver\bsp_dma.h
+stm32f429ig\stm32f4xx_hal_msp.o: ..\Drivers\BSP_Driver\bsp_spi.h
+stm32f429ig\stm32f4xx_hal_msp.o: ..\Drivers\BSP_Driver\w25q64.h
